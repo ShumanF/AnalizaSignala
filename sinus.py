@@ -94,6 +94,7 @@ if on:
   plt.legend(loc='lower right')
 else:
      plt.plot(y,lw=1.5,color='blue')
+img = fig.savefig('plot.png')
 plt.close(fig)
 
 #col1, col2 = st.columns(2)
@@ -103,6 +104,7 @@ st.header("Analiza Signala")
 st.sidebar.caption("***Gangsta***")
 st.sidebar.dataframe(table)
 
+st.image('plot.png')
 st.write(fig)
 
 #st.slider('Select a range of values',0, num_samples, (5,50))
