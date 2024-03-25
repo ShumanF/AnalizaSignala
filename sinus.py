@@ -49,13 +49,13 @@ def generate_tone():
 
 def switch_waves(option):
    options = {
-            "Sin":sin,
-            "Cos":cos,
-            "Sawtooth":sawtooth,
-            "Tirangle":triangle,
-            "Square":square,
-            "White noise":white[:500],
-            "Brown noise":brown
+            "Sin": np.sin(2*np.pi*t),
+            "Cos":np.cos(2*np.pi*t),
+            "Sawtooth":sp.signal.sawtooth(2 * np.pi *t,1),
+            "Tirangle":sp.signal.sawtooth(2 * np.pi * t,0.5),
+            "Square":sp.signal.square(2*np.pi*t),
+            "White noise":white_noise(2,44100)[:500],
+            "Brown noise":brown_noise(2,44100)
    }
    return options.get(option,"Default")
 
@@ -65,7 +65,9 @@ pick_wave_gen = st.sidebar.radio(
       "Sin","Cos","Sawtooth","Tirangle","Square","White noise","Brown noise"
    ]
 )
-on = st.sidebar.toggle("Napravi analizu signala")
+on = st.sidebar.checkbox("Napravi analizu signala") 
+#st.sidebar.toggle("Napravi analizu signala")
+
 
 y = switch_waves(pick_wave_gen)
 Umax = max(y)
@@ -92,6 +94,7 @@ if on:
   plt.legend(loc='lower right')
 else:
      plt.plot(y,lw=1.5,color='blue')
+plt.close(fig)
 
 #col1, col2 = st.columns(2)
 
