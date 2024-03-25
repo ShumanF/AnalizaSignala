@@ -31,21 +31,14 @@ def efective(y):
   return np.sqrt(integral / len(y))
 
 
-t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
-
-white = white_noise(2,44100)
-brown = brown_noise(2,44100)
-sin = np.sin(2*np.pi*t)
-cos = np.cos(2*np.pi*t)
-square = sp.signal.square(2*np.pi*t)
-sawtooth = sp.signal.sawtooth(2 * np.pi *t,1)
-triangle = sp.signal.sawtooth(2 * np.pi * t,0.5)
-
 def generate_tone():
   # Ensure the values are in 16-bit range
   audio = np.int16(y * 32767)
   # Write to a MP3 file
   sp.io.wavfile.write('wave.mp3', sample_rate, audio)
+
+  
+t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
 
 def switch_waves(option):
    options = {
