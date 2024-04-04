@@ -109,7 +109,7 @@ if __name__ == '__main__':
     
   y = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate)
   
-  start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N sampels)',0, sample_rate*time,(0,sample_rate))    
+  start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
 
   st.write(gen_plot(y[start:end],Umax=0,Umin=0,Udc=0,Uef=0,on=False))
 
