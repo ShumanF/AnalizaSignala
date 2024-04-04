@@ -59,7 +59,7 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100
             "Square": amplitude*sp.signal.square(2*np.pi*t*frequency),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
-            "Uploaded File": audio_file
+            #"Uploaded File": audio_file
 
    }
    return options.get(option,"Default")
@@ -84,12 +84,6 @@ def tabela_analize(y):
                             index= ["Umax","Umin","Upp","Udc","Uef","σ","γ","Psr","Psr_dBW "])
 
    return table
-
-#col1, col2 = st.columns(2)
-#st.sidebar.caption("***Gangsta***")
-#st.sidebar.toggle("Napravi analizu signala")
-
-#st.sidebar.button("Generate Tone",on_click=generate_wave(signal))
 
 
 if __name__ == '__main__':
