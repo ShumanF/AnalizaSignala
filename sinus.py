@@ -88,7 +88,7 @@ def tabela_analize(y):
 
 if __name__ == '__main__':
 
-  st.header("ANALIZA SINALA")
+  st.header("ANALIZA SIGNALA")
 
   sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 44100,44100)    
   amplitude = st.sidebar.number_input("Odaberi amplitudu [V]", 0.1, 230.0,1.)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
     [
-        "Sin","Cos","Sawtooth","Tirangle","Square","White noise","Brown noise","Uploaded File"
+        "Sin","Cos","Sawtooth","Triangle","Square","White noise","Brown noise","Uploaded File"
     ]
     )
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
