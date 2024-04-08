@@ -140,12 +140,11 @@ if __name__ == '__main__':
     
     index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
     mjerne_jedinice = ['v',"V","V","V","V","V","%","W","dBW"]
-    forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
+    #forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
     data = []
     for i in range (1,9):
       data.append({
         #"Formule":f"Formule/{i}.png",
-        "Formule": formule,
         "Values":index[i],
         "":rounded_values[i],
         "mjerne_jedinice":mjerne_jedinice[i]
