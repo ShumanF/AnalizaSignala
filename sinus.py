@@ -163,7 +163,7 @@ if __name__ == '__main__':
                    num_rows='fixed',
                    hide_index=1,
                    column_config={"Forumule":st.column_config.ImageColumn("Formule")},
-                   width=350
+                   width=400
                   )
     #st.markdown(ttable.to_html(escape=False), unsafe_allow_html=True)
 
