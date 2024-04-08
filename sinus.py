@@ -145,7 +145,7 @@ if __name__ == '__main__':
     for i in range (1,9):
       data.append({
         #"Formule":f"Formule/{i}.png",
-        "Formule": formule
+        "Formule": formule,
         "Values":index[i],
         "":rounded_values[i],
         "mjerne_jedinice":mjerne_jedinice[i]
