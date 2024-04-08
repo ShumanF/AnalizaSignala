@@ -138,7 +138,7 @@ if __name__ == '__main__':
     rounded_values = [round(x,16) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
     #rounded_values =  [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]
     
-    index= ["Umax","Umin","Upp","Udc","Uef","σ","γ","Psr","Psr_dBW "]
+    index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
     mjerne_jedinice = ['v',"V","V","V","V","V","%","W","dBW"]
     data = []
     for i in range (1,9):
