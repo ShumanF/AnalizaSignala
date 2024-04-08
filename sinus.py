@@ -120,7 +120,7 @@ if __name__ == '__main__':
   st.subheader('Zvuk generiranog signala')
   st.audio('wave.mp3')
 
-  checkbox = st.toggle("Stisnite gumb da napravite analizu signala [uzima se do prvih 1,2M uzoraka]")
+  checkbox = st.toggle("Stisnite gumb da napravite analizu signala [uzima se do prvih 1,2M uzoraka]",value=True)
 
   if checkbox:
     Umax = max(y[:N_uzoraka])
