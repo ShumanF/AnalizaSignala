@@ -144,6 +144,7 @@ if __name__ == '__main__':
     for i in range (1,9):
       data.append({
         #"Formule":f"Formule/{i}.png",
+        "Formule": [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
         "Values":index[i],
         "":rounded_values[i],
         "mjerne_jedinice":mjerne_jedinice[i]
