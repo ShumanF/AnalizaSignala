@@ -55,7 +55,7 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100
             "Sin": amplitude* np.sin(2*np.pi*t*frequency),
             "Cos":  amplitude*np.cos(2*np.pi*t*frequency),
             "Sawtooth": amplitude*sp.signal.sawtooth(2 * np.pi *t*frequency,1),
-            "Tirangle": amplitude*sp.signal.sawtooth(2 * np.pi * t*frequency,0.5),
+            "Triangle": amplitude*sp.signal.sawtooth(2 * np.pi * t*frequency,0.5),
             "Square": amplitude*sp.signal.square(2*np.pi*t*frequency),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
