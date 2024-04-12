@@ -99,7 +99,7 @@ if __name__ == '__main__':
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
     [
-        "Sin","Cos","Sawtooth","Triangle [KVAR!]","Square","White noise","Brown noise","Uploaded File [KVAR!]"
+        "Sin","Cos","Sawtooth","Triangle","Square","White noise","Brown noise","Uploaded File [KVAR!]"
     ]
     )
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
