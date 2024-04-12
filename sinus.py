@@ -156,7 +156,7 @@ if __name__ == '__main__':
                                   #"":["V","V","V","V","V","%"]
                                   },
                                 index= ["Umax","Umin","Upp","Udc","Uef","σ","γ","Psr","Psr_dBW "])
-
+    y =y[::2]
     st.write(gen_plot(y[start:end],Umax,Umin,Udc,Uef,checkbox))
     #st.dataframe(ttable,width=300,hide_index=True)
 
