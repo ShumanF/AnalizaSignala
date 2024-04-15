@@ -34,7 +34,7 @@ def gen_plot(y,Umax,Umin,Udc,Uef,on):
     fig = plt.figure(figsize=(12,6))
     #plt.style.use('default')  #Solarize_Light2 #default
     fig.patch.set_facecolor('xkcd:cream')
-    plt.grid()
+    plt.grid(True)
     plt.xlabel("time[seconds] * sample rate", fontsize=12,fontname='Arial')
     plt.ylabel("Amplituda $u(t)$ [V]", fontsize=19,fontname='Arial')
     if on:
