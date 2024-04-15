@@ -10,16 +10,17 @@ import librosa
 N_uzoraka = 1200000
 wave_list = []
 
+@st.cache_data
 def white_noise(amplitude,time, sample):
     noise = 2*amplitude * np.random.random(int(time * sample)) - (amplitude)
-    return noise
+    return noise.astype(np.float16)
 
+@st.cache_data
 def brown_noise(time, sample):
-    noise = np.random.normal(0,1,int(time*sample))
-    noise = np.cumsum(noise)
+    noise = np.cumsum(np.random.normal(0,1,int(time*sample)))
     noise = noise - np.mean(noise)  # Remove DC offset
     noise = noise / np.max(np.abs(noise)) #normalisation
-    return noise
+    return noise.astype(np.float16)
 
 def dc_component(y):
   integral = np.trapz(y)
@@ -51,17 +52,33 @@ def gen_plot(y,Umax,Umin,Udc,Uef,on):
     return fig
 
 #def generate_wave(y):
-  
+
+@st.cache_data
+def generate_sine_wave(amplitude, frequency, t):
+    return amplitude * np.sin(2 * np.pi * t * frequency)
+@st.cache_data
+def generate_cosine_wave(amplitude, frequency, t):
+    return amplitude * np.cos(2 * np.pi * t * frequency)
+@st.cache_data
+def generate_sawtooth_wave(amplitude, frequency, t):
+    return amplitude * sp.signal.sawtooth(2 * np.pi * t * frequency, width=1)
+@st.cache_data
+def generate_triangle_wave(amplitude, frequency, t):
+    return amplitude * sp.signal.sawtooth(2 * np.pi * t * frequency, width=0.5)
+@st.cache_data
+def generate_square_wave(amplitude, frequency, t):
+    return amplitude * sp.signal.square(2 * np.pi * t * frequency)
+
     
 def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100,uploaded_file = None ):
   
    t = np.linspace(0, time, int(sample_rate * time), endpoint=False)
    options = {
-            "Sin": amplitude* np.sin(2*np.pi*t*frequency),
-            "Cos":  amplitude*np.cos(2*np.pi*t*frequency),
-            "Sawtooth": amplitude*sp.signal.sawtooth(2 * np.pi *t*frequency,1),
-            "Triangle": amplitude*sp.signal.sawtooth(2 * np.pi * t*frequency,0.5),
-            "Square": amplitude*sp.signal.square(2*np.pi*t*frequency),
+            "Sin": generate_sine_wave(amplitude,frequency,t),
+            "Cos":  generate_cosine_wave(amplitude,frequency,t),
+            "Sawtooth": generate_sawtooth_wave(amplitude,frequency,t),
+            "Triangle": generate_triangle_wave(amplitude, frequency, t),
+            "Square": generate_square_wave(amplitude, frequency, t),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
             "Uploaded File": librosa.load('C:/Users/Korisnik/Desktop/AnalizaSignala-1/wave.mp3')
@@ -121,30 +138,25 @@ if __name__ == '__main__':
     rounded_values = [round(x,16) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
     
     index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
-    mjerne_jedinice = ['v',"V","V","V","V","V","%","W","dBW"]
+    mjerne_jedinice = ["V","V","V","V","V","V","%","W","dBW"]
     #forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
 
     data = []
     for i in range (0,9):
       data.append({
-        #"Formule":f"Formule/{i}.png",
+        #"Formule":rf"C:\Users\Korisnik\Desktop\AnalizaSignala-1\Formule/{i}.png",
         "Values":index[i],
         "":rounded_values[i],
         "mjerne_jedinice":mjerne_jedinice[i]
       })
     table = pd.DataFrame(data)
     
-    
-    
+  
     st.write(gen_plot(y[start:end],Umax,Umin,Udc,Uef,checkbox))
     #st.dataframe(ttable,width=300,hide_index=True)
 
-    st.data_editor(table,
-                   num_rows='fixed',
-                   hide_index=1,
-                   column_config={"Forumule":st.column_config.ImageColumn("Formule")},
-                   width=400
-                  )
-    
-   
-
+    st.dataframe(table,
+                 hide_index=1,
+                 column_config={"Forumule":st.column_config.ImageColumn("Formule")},
+                 width=300
+                )
