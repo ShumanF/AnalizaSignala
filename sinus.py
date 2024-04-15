@@ -81,7 +81,7 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100
             "Square": generate_square_wave(amplitude, frequency, t),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
-            "Uploaded File": librosa.load('C:/Users/Korisnik/Desktop/AnalizaSignala-1/wave.mp3')
+            #"Uploaded File": librosa.load('C:/Users/Korisnik/Desktop/AnalizaSignala-1/wave.mp3')
 
    }
    return options.get(option,"Default")
