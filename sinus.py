@@ -49,7 +49,7 @@ def gen_plot(signal,Umax,Umin,Udc,Uef,on):
     fig = plt.figure(figsize=(12,6))
     #plt.style.use('default')  #Solarize_Light2 #default
     fig.patch.set_facecolor('xkcd:cream')
-    plt.grid()
+    plt.grid(True)
     plt.xlabel("time[seconds] * sample rate", fontsize=12,fontname='Arial')
     plt.ylabel("Amplituda $u(t)$ [V]", fontsize=19,fontname='Arial')
     if on:
@@ -180,4 +180,5 @@ if __name__ == '__main__':
   on = st.checkbox("Dodatne karakteristike singala")
   if on:
     st.write(karakteristike_vala_plot(signal))
-  
+
+
