@@ -30,7 +30,22 @@ def efective(y):
   integral = np.trapz(y**2)
   return np.sqrt(integral / len(y))
 
-def gen_plot(y,Umax,Umin,Udc,Uef,on):
+def karakteristike_vala_plot(signal):
+  fig = plt.figure(figsize=(10,8))
+  faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
+
+  plt.subplot(211)
+  plt.scatter(signal,faza,alpha=0.3)
+  plt.title("Fazni Prostor",fontweight="bold")  
+  plt.xlabel("Amplituda $(x)$")
+  plt.ylabel("Faza ϕ ")
+  plt.grid(True)
+  plt.show()
+  return fig
+   
+
+@st.cache_data
+def gen_plot(signal,Umax,Umin,Udc,Uef,on):
     fig = plt.figure(figsize=(12,6))
     #plt.style.use('default')  #Solarize_Light2 #default
     fig.patch.set_facecolor('xkcd:cream')
@@ -39,7 +54,7 @@ def gen_plot(y,Umax,Umin,Udc,Uef,on):
     plt.ylabel("Amplituda $u(t)$ [V]", fontsize=19,fontname='Arial')
     if on:
       plt.title("Analiza Generiranog Singalnog Val",fontsize=19,fontweight='bold')
-      plt.plot(y,lw=1.9,color='cornflowerblue')
+      plt.plot(signal,lw=1.9,color='cornflowerblue')
       plt.axhline(y=Umax,color='r',linestyle=':',label='U max',lw=2)
       plt.axhline(y=Umin,color='darkred',linestyle=':',label='U min',lw=2)
       plt.axhline(y=Udc,color='black',linestyle=':',label='U dc',lw=2)
@@ -47,7 +62,7 @@ def gen_plot(y,Umax,Umin,Udc,Uef,on):
       plt.legend(loc='lower right')
     else:
         plt.title("Generirani Singalni Val",fontsize=19,fontweight='bold')
-        plt.plot(y,lw=2.5,color='royalblue')
+        plt.plot(signal,lw=2.5,color='royalblue')
     plt.close(fig)
     return fig
 
@@ -70,7 +85,7 @@ def generate_square_wave(amplitude, frequency, t):
     return amplitude * sp.signal.square(2 * np.pi * t * frequency)
 
     
-def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100,uploaded_file = None ):
+def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100,uploaded_file = None):
   
    t = np.linspace(0, time, int(sample_rate * time), endpoint=False)
    options = {
@@ -81,9 +96,10 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100
             "Square": generate_square_wave(amplitude, frequency, t),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
-            #"Uploaded File": librosa.load('C:/Users/Korisnik/Desktop/AnalizaSignala-1/wave.mp3')
+            "Uploaded File": None if uploaded_file is None else librosa.load(uploaded_file,sr=44100)[0]
 
    }
+   
    return options.get(option,"Default")
 
 
@@ -104,59 +120,64 @@ if __name__ == '__main__':
     ]
     )
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
-
-  if uploaded_file is not None:
-    audio_file = librosa.load(uploaded_file,sr=sample_rate)
     
-  y = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file='wave.mp3')
-  
+  signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
+
+  if pick_wave_gen == 'Uploaded File':
+     time = int(len(signal)/44100)
+     
+
   start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
 
-  st.write(gen_plot(y[start:end],Umax=0,Umin=0,Udc=0,Uef=0,on=False))
-  #st.write(type(y))
+  st.write(gen_plot(signal[start:end],Umax=0,Umin=0,Udc=0,Uef=0,on=False))
+  
   # Ensure the values are in 16-bit range
-  audio = np.int16(y * 32767)
+  audio = np.int16(signal * 32767)
   # Write to a MP3 file
   sp.io.wavfile.write('wave.mp3', sample_rate, audio)
   st.subheader('Zvuk generiranog signala')
   st.audio('wave.mp3')
 
-  checkbox = st.toggle("Stisnite gumb da napravite analizu signala [uzima se do prvih 1,2M uzoraka]",value=True)
+  st.write(" analiza signala [uzima se do prvih 1,2M uzoraka]")
 
-  if checkbox:
-    Umax = max(y[:N_uzoraka])
-    Umin = min(y[:N_uzoraka])
-    Upp = Umax - Umin
-    Udc = dc_component(y)
-    Uef = efective(y)
-    standard_deviation = sp.ndimage.standard_deviation(y[:N_uzoraka])
-    #gamma = 'inf' if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
-    gamma = float('inf') if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
-    Psr = Uef**2
-    Psr_dBW = 20 * np.log10(Uef) 
   
-    rounded_values = [round(x,16) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
-    
-    index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
-    mjerne_jedinice = ["V","V","V","V","V","V","%","W","dBW"]
-    #forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
+  Umax = max(signal[:N_uzoraka])
+  Umin = min(signal[:N_uzoraka])
+  Upp = Umax - Umin
+  Udc = dc_component(signal)
+  Uef = efective(signal)
+  standard_deviation = sp.ndimage.standard_deviation(signal[:N_uzoraka])
+  #gamma = 'inf' if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
+  gamma = float('inf') if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
+  Psr = Uef**2
+  Psr_dBW = 20 * np.log10(Uef) 
+        
+  rounded_values = [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]
+          
+  index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
+  mjerne_jedinice = ["V","V","V","V","V","V","%","W","dBW"]
+  #forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
 
-    data = []
-    for i in range (0,9):
+  data = []
+  for i in range (0,9):
       data.append({
         #"Formule":rf"C:\Users\Korisnik\Desktop\AnalizaSignala-1\Formule/{i}.png",
         "Values":index[i],
         "":rounded_values[i],
         "mjerne_jedinice":mjerne_jedinice[i]
       })
-    table = pd.DataFrame(data)
+  table = pd.DataFrame(data)
     
   
-    st.write(gen_plot(y[start:end],Umax,Umin,Udc,Uef,checkbox))
-    #st.dataframe(ttable,width=300,hide_index=True)
-
-    st.dataframe(table,
+  st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,on=True))
+  #st.dataframe(ttable,width=300,hide_index=True)
+  
+  st.dataframe(table,
                  hide_index=1,
                  column_config={"Forumule":st.column_config.ImageColumn("Formule")},
-                 width=300
+                 width=450
                 )
+  on = st.checkbox("Dodatne karakteristike singala")
+  if on:
+    st.write(karakteristike_vala_plot(signal))
+  
