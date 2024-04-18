@@ -3,12 +3,9 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import pandas as pd
 import streamlit as st
-import io
-import os
 import librosa
 
 N_uzoraka = 1200000
-wave_list = []
 
 @st.cache_data
 def white_noise(amplitude,time, sample):
