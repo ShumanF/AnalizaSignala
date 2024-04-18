@@ -119,7 +119,7 @@ if __name__ == '__main__':
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
   time = st.sidebar.number_input("Odaberi trajanje u sekundama [s]", 1, 60)
-  Prigušenje = st.sidebar.slider("Prigusenje vala $e^-λ*t * signal$ λ:",0.0,1.0,0.0)
+  Prigušenje = st.sidebar.slider("Prigusenje vala $e^-λ*t * signal$ λ:",0.0,1.0,0.001)
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
     [
