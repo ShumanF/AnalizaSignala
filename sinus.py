@@ -27,7 +27,7 @@ def efective(y):
   integral = np.trapz(y**2)
   return np.sqrt(integral / len(y))
 
-def karakteristike_vala_plot(signal):
+def faza_vala_plot(signal):
   fig = plt.figure(figsize=(10,8))
   faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
 
@@ -174,8 +174,8 @@ if __name__ == '__main__':
                  column_config={"Forumule":st.column_config.ImageColumn("Formule")},
                  width=450
                 )
-  on = st.checkbox("Dodatne karakteristike singala")
-  if on:
-    st.write(karakteristike_vala_plot(signal))
+  faza_on = st.checkbox("Fazna karakteristike singala")
+  if faza_on:
+    st.write(faza_vala_plot(signal))
 
 
