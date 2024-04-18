@@ -42,11 +42,10 @@ def faza_vala_plot(signal):
 def plot_frekvencijski_spekar(signal,sample_rate):
    magnituda = np.abs( np.fft.fft(signal) )
    frequency = np.linspace(0,sample_rate,len(magnituda))
-   frequency_bin = int(len(frequency*0.1))
    
    fig = plt.figure(figsize=(10,8))
    plt.subplot(211)
-   plt.plot(frequency[:frequency_bin],magnituda[:frequency_bin])
+   plt.plot(frequency,magnituda)
    plt.xlabel("Frequency (Hz)")
    plt.ylabel("Magnitude")
    plt.show()
