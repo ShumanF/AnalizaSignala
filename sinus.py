@@ -57,8 +57,8 @@ def gen_plot(signal,Umax,Umin,Udc,Uef,on):
     #plt.style.use('default')  #Solarize_Light2 #default
     fig.patch.set_facecolor('xkcd:cream')
     plt.grid(True)
-    plt.xlabel("time[seconds] * sample rate", fontsize=12,fontname='Arial')
-    plt.ylabel("Amplituda $u(t)$ [V]", fontsize=19,fontname='Arial')
+    plt.xlabel("time[seconds] * sample rate", fontsize=12)
+    plt.ylabel("Amplituda $u(t)$ [V]", fontsize=19)
     if on:
       plt.title("Analiza Generiranog Singalnog Val",fontsize=19,fontweight='bold')
       plt.plot(signal,lw=1.9,color='cornflowerblue')
