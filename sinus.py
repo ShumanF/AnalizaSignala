@@ -39,7 +39,15 @@ def faza_vala_plot(signal):
   plt.grid(True)
   plt.show()
   return fig
+def plot_frekvencijski_spekar(signal,sample_rate):
+   magnituda = np.abs( np.fft.fft(signal) )
+   frequency = np.linspace(0,sample_rate,len(magnituda))
    
+   plt.figure(figsize=(10,8))
+   plt.plot(frequency,magnituda)
+   plt.xlabel("Frequency (Hz)")
+   plt.ylabel("Magnitude")
+   plt.show()
 
 @st.cache_data
 def gen_plot(signal,Umax,Umin,Udc,Uef,on):
@@ -175,7 +183,9 @@ if __name__ == '__main__':
                  width=450
                 )
   faza_on = st.checkbox("Fazna karakteristike singala")
+  frequency_spectrum = st.checkbox("Frekvencijski spektar singala")
   if faza_on:
     st.write(faza_vala_plot(signal))
-
+  if frequency_spectrum:
+     st.write(plot_frekvencijski_spekar(signal,sample_rate))
 
