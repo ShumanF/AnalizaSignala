@@ -119,7 +119,7 @@ if __name__ == '__main__':
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
   time = st.sidebar.number_input("Odaberi trajanje u sekundama [s]", 1, 60)
-
+  Prigušenje = st.sidebar.slider("Prigusenje vala $e^-λ*t * signal$ λ:",0.0,1.0,0.0)
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
     [
@@ -133,7 +133,7 @@ if __name__ == '__main__':
   if pick_wave_gen == 'Uploaded File':
      time = int(len(signal)/44100)
      
-
+  signal = Prigušenje * signal
   start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
 
   st.write(gen_plot(signal[start:end],Umax=0,Umin=0,Udc=0,Uef=0,on=False))
