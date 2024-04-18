@@ -44,7 +44,7 @@ def plot_frekvencijski_spekar(signal,sample_rate):
    frequency = np.linspace(0,sample_rate,len(magnituda))
    
    fig = plt.figure(figsize=(10,8))
-   plt.subplot()
+   plt.subplot(211)
    plt.plot(frequency,magnituda)
    plt.xlabel("Frequency (Hz)")
    plt.ylabel("Magnitude")
