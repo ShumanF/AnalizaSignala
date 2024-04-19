@@ -131,12 +131,10 @@ if __name__ == '__main__':
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
 
 
-  if pick_wave_gen == 'Uploaded File':
-     time = int(len(signal)/44100)   
-  else:
+  if pick_wave_gen != 'Uploaded File':
     t = np.linspace(0, time, int(sample_rate * time), endpoint=False) 
     signal = np.exp(-t*prigušenje) * signal
-
+  
   
   start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
 
