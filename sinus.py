@@ -32,7 +32,7 @@ def faza_vala_plot(signal):
   faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
 
   plt.subplot(211)
-  plt.scatter(signal,faza,alpha=0.3)
+  plt.plot(signal,faza,'o',alpha=0.3)
   plt.title("Fazni Prostor",fontweight="bold")  
   plt.xlabel("Amplituda $(x)$")
   plt.ylabel("Faza ϕ ")
