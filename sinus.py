@@ -129,11 +129,13 @@ if __name__ == '__main__':
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
     
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
-
+  t = np.linspace(0, time, int(sample_rate * time), endpoint=False) 
+  
   if pick_wave_gen == 'Uploaded File':
      time = int(len(signal)/44100)
+     t = len(pick_wave_gen)
 
-  t = np.linspace(0, time, int(sample_rate * time), endpoint=False)   
+    
   signal = np.exp(-t*Prigušenje) * signal
   start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
 
