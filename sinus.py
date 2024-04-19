@@ -129,11 +129,12 @@ if __name__ == '__main__':
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
     
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
+
   t = np.linspace(0, time, int(sample_rate * time), endpoint=False) 
-  
+
   if pick_wave_gen == 'Uploaded File':
      time = int(len(signal)/44100)
-     t = len(pick_wave_gen)
+     t = len(signal)
 
     
   signal = np.exp(-t*Prigušenje) * signal
