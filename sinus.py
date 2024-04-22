@@ -26,12 +26,10 @@ def dc_component(y):
 def efective(y):
   integral = np.trapz(y**2)
   return np.sqrt(integral / len(y))
-
+@st.cache_data
 def faza_vala_plot(signal):
-  fig = plt.figure(figsize=(10,8))
+  fig = plt.figure(figsize=(15,8))
   faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
-
-  plt.subplot(211)
   plt.scatter(signal,faza,alpha=0.3)
   plt.title("Fazni Prostor",fontweight="bold")  
   plt.xlabel("Amplituda $(x)$")
@@ -39,17 +37,24 @@ def faza_vala_plot(signal):
   plt.grid(True)
   plt.show()
   return fig
-def plot_frekvencijski_spekar(signal,sample_rate):
-   magnituda = np.abs( np.fft.fft(signal) )
-   frequency = np.linspace(0,sample_rate,len(magnituda))
-   
-   fig = plt.figure(figsize=(10,8))
-   plt.subplot(211)
-   plt.plot(frequency,magnituda)
-   plt.xlabel("Frequency (Hz)")
-   plt.ylabel("Magnitude")
-   plt.show()
-   return fig
+
+@st.cache_data
+def plot_frekvencijski_spekar(signal,t):
+  signal = signal[:N_uzoraka]
+  magnituda = np.abs( np.fft.fft(signal) )
+  frequency = np.fft.fftfreq(len(signal), d=t[1] - t[0])
+  magnituda_dB = 20 * np.log10(magnituda)
+
+  fig = plt.figure(figsize=(15,5))
+  plt.stem(frequency,magnituda, 'b', markerfmt=" ",basefmt="-b")
+  plt.xscale('log')
+  ticks = [5,50, 100, 200, 400, 1000, 2000, 4000, 10000, 20000]
+  plt.xticks(ticks, labels=[str(tick) for tick in ticks])
+  plt.xlabel("Frequency (Hz)")
+  plt.ylabel("Magnitude [dB]")
+  plt.grid()
+  plt.show()
+  return fig
 
 @st.cache_data
 def gen_plot(signal,Umax,Umin,Udc,Uef,on):
@@ -131,12 +136,11 @@ if __name__ == '__main__':
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
 
   t = np.linspace(0, time, int(sample_rate * time), endpoint=False) 
-
+  
   if pick_wave_gen == 'Uploaded File':
-     time = int(len(signal)/44100)
-     t = len(signal)
-
-    
+    t = np.arange(len(signal))/44100
+    st.write(t.shape[0])
+  
   signal = np.exp(-t*Prigušenje) * signal
   start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
 
@@ -149,9 +153,8 @@ if __name__ == '__main__':
   st.subheader('Zvuk generiranog signala')
   st.audio('wave.mp3')
 
-  st.write(" analiza signala [uzima se do prvih 1,2M uzoraka]")
+  st.write("Analiza signala [uzima se do prvih 1,2M uzoraka]")
 
-  
   Umax = max(signal[:N_uzoraka])
   Umin = min(signal[:N_uzoraka])
   Upp = Umax - Umin
@@ -189,9 +192,9 @@ if __name__ == '__main__':
                  width=450
                 )
   faza_on = st.checkbox("Fazna karakteristike singala")
-  frequency_spectrum = st.checkbox("Frekvencijski spektar singala")
+  frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala]")
   if faza_on:
     st.write(faza_vala_plot(signal))
   if frequency_spectrum:
-     st.write(plot_frekvencijski_spekar(signal,sample_rate))
+     st.write(plot_frekvencijski_spekar(signal,t))
 
