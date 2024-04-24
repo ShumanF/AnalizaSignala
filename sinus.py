@@ -26,6 +26,7 @@ def dc_component(y):
 def efective(y):
   integral = np.trapz(y**2)
   return np.sqrt(integral / len(y))
+
 @st.cache_data
 def faza_vala_plot(signal):
   fig = plt.figure(figsize=(15,8))
@@ -39,17 +40,15 @@ def faza_vala_plot(signal):
   return fig
 
 @st.cache_data
-def plot_frekvencijski_spekar(signal,t):
+def plot_frekvencijski_spekar(signal,sample_rate):
   signal = signal[:N_uzoraka]
   magnituda = np.abs( np.fft.fft(signal) )
-  frequency = np.fft.fftfreq(len(signal), d=t[1] - t[0])
+  frequency = np.fft.fftfreq(len(signal), d=1/sample_rate)
   magnituda_dB = 20 * np.log10(magnituda)
 
   fig = plt.figure(figsize=(15,5))
-  plt.stem(frequency,magnituda, 'b', markerfmt=" ",basefmt="-b")
-  plt.xscale('log')
-  ticks = [5,50, 100, 200, 400, 1000, 2000, 4000, 10000, 20000]
-  plt.xticks(ticks, labels=[str(tick) for tick in ticks])
+  plt.plot(frequency,magnituda_dB)
+  plt.xlim(0,sample_rate/2)
   plt.xlabel("Frequency (Hz)")
   plt.ylabel("Magnitude [dB]")
   plt.grid()
@@ -108,7 +107,7 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100
             "Square": generate_square_wave(amplitude, frequency, t),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
-            "Uploaded File": None if uploaded_file is None else librosa.load(uploaded_file,sr=44100)[0]
+            "Uploaded File": None if uploaded_file is None else librosa.load(uploaded_file,sr=sample_rate)[0]
 
    }
    
@@ -135,10 +134,9 @@ if __name__ == '__main__':
     
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
 
-  t = np.linspace(0, time, int(sample_rate * time), endpoint=False) 
+  t = np.arange(0, 1, 1/(sample_rate * time)) 
 
   if pick_wave_gen == 'Uploaded File':
-     time = int(len(signal)/44100)
      t = len(signal)
 
     
@@ -197,5 +195,5 @@ if __name__ == '__main__':
   if faza_on:
     st.write(faza_vala_plot(signal))
   if frequency_spectrum:
-     st.write(plot_frekvencijski_spekar(signal,t))
+     st.write(plot_frekvencijski_spekar(signal,sample_rate))
 
