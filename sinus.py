@@ -29,6 +29,7 @@ def efective(y):
 
 @st.cache_data
 def faza_vala_plot(signal):
+  signal = signal[:N_uzoraka]
   fig = plt.figure(figsize=(15,8))
   faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
   plt.scatter(signal,faza,alpha=0.3)
@@ -165,10 +166,10 @@ if __name__ == '__main__':
   Psr = Uef**2
   Psr_dBW = 20 * np.log10(Uef) 
         
-  rounded_values = [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]
+  rounded_values = [round(x,4) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
           
   index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
-  mjerne_jedinice = ["V","V","V","V","V","V","%","W","dBW"]
+  mjerne_jedinice = [" V"," V"," V"," V"," V"," V"," %"," W"," dBW"]
   #forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
 
   data = []
@@ -176,8 +177,7 @@ if __name__ == '__main__':
       data.append({
         #"Formule":rf"C:\Users\Korisnik\Desktop\AnalizaSignala-1\Formule/{i}.png",
         "Values":index[i],
-        "":rounded_values[i],
-        "mjerne_jedinice":mjerne_jedinice[i]
+        "":str(rounded_values[i]) + mjerne_jedinice[i],
       })
   table = pd.DataFrame(data)
     
@@ -190,8 +190,8 @@ if __name__ == '__main__':
                  column_config={"Forumule":st.column_config.ImageColumn("Formule")},
                  width=450
                 )
-  faza_on = st.checkbox("Fazna karakteristike singala")
-  frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala]")
+  faza_on = st.checkbox("Fazna karakteristike singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
+  frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
   if faza_on:
     st.write(faza_vala_plot(signal))
   if frequency_spectrum:
