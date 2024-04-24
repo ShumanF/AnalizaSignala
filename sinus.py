@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
   st.header("ANALIZA SIGNALA")
 
-  sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 44100,44100)    
+  sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 44100,22050)    
   amplitude = st.sidebar.number_input("Odaberi amplitudu [V]", 0.1, 1000.0,1.)
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
