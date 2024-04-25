@@ -47,11 +47,12 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   frequency = np.fft.fftfreq(len(signal), d=1/sample_rate)
   magnituda_dB = 20 * np.log10(magnituda)
 
-  fig = plt.figure(figsize=(15,5))
+  fig = plt.figure(figsize=(15,7))
   plt.plot(frequency,magnituda_dB)
   plt.xlim(0,sample_rate/2)
-  plt.xlabel("Frequency (Hz)")
-  plt.ylabel("Magnitude [dB]")
+  plt.title('Frekvencijiski Spektar',fontsize=19,fontweight='bold')
+  plt.xlabel("Frequency (Hz)",fontsize=14,fontweight='bold')
+  plt.ylabel("Magnitude [dB]",fontsize=14,fontweight='bold')
   plt.grid()
   plt.show()
   return fig
@@ -97,7 +98,7 @@ def generate_square_wave(amplitude, frequency, t):
     return amplitude * sp.signal.square(2 * np.pi * t * frequency)
 
     
-def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 44100,uploaded_file = None):
+def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 22050,uploaded_file = None):
   
    t = np.linspace(0, time, int(sample_rate * time), endpoint=False)
    options = {
@@ -124,7 +125,7 @@ if __name__ == '__main__':
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
   time = st.sidebar.number_input("Odaberi trajanje u sekundama [s]", 1, 60)
-  prigušenje = st.sidebar.slider("Prigusenje vala formulom $e**(-λ*t) * signal$ slider podesava λ :",0.0, 10.0, 0.0)
+  prigušenje = st.sidebar.slider("Prigusenje vala formulom $$e^{-\lambda t} \cdot signal$$ slider podesava λ :",0.0, 10.0, 0.0)
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
     [
@@ -171,7 +172,7 @@ if __name__ == '__main__':
   index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
   mjerne_jedinice = [" V"," V"," V"," V"," V"," V"," %"," W"," dBW"]
   #forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
-
+  
   data = []
   for i in range (0,9):
       data.append({
