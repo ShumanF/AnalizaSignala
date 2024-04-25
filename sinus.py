@@ -4,7 +4,7 @@ import scipy as sp
 import pandas as pd
 import streamlit as st
 import librosa
-
+import io
 N_uzoraka = 1200000
 
 @st.cache_data
@@ -150,9 +150,11 @@ if __name__ == '__main__':
   # Ensure the values are in 16-bit range
   audio = np.int16(signal * 32767)
   # Write to a MP3 file
-  sp.io.wavfile.write('wave.mp3', sample_rate, audio)
+  buffer = io.BytesIO()
+  sp.io.wavfile.write(buffer, sample_rate, audio)
+  buffer.seek(0)
   st.subheader('Zvuk generiranog signala')
-  st.audio('wave.mp3')
+  st.audio(buffer,"audio/wav",sample_rate)
 
   st.write("Analiza signala [uzima se do prvih 1,2M uzoraka]")
 
