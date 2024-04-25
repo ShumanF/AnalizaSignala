@@ -120,9 +120,9 @@ if __name__ == '__main__':
 
   st.header("ANALIZA SIGNALA")
 
-  sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 44100,22050)    
+  sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 44100,22050)  
+  st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")  
   amplitude = st.sidebar.number_input("Odaberi amplitudu [V]", 0.1, 1000.0,1.)
-  st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
   time = st.sidebar.number_input("Odaberi trajanje u sekundama [s]", 1, 60)
   prigušenje = st.sidebar.slider("Prigusenje vala formulom $$e^{-\lambda t} \cdot signal$$ slider podesava λ :",0.0, 10.0, 0.0)
@@ -147,9 +147,9 @@ if __name__ == '__main__':
 
   st.write(gen_plot(signal[start:end],Umax=0,Umin=0,Udc=0,Uef=0,on=False))
   
-  # Ensure the values are in 16-bit range
+  # Pretvaranje u 16-bit range
   audio = np.int16(signal * 32767)
-  # Write to a MP3 file
+  #  Wav file
   buffer = io.BytesIO()
   sp.io.wavfile.write(buffer, sample_rate, audio)
   buffer.seek(0)
@@ -169,28 +169,36 @@ if __name__ == '__main__':
   Psr = Uef**2
   Psr_dBW = 20 * np.log10(Uef) 
         
-  rounded_values = [round(x,4) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
+  rounded_values = [str(round(x,5)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
           
   index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
   mjerne_jedinice = [" V"," V"," V"," V"," V"," V"," %"," W"," dBW"]
-  #forumule = [st.latex(r'''U_{ef} = U_{RMS} = \sqrt{\frac{1}{T} \int_{T} u^2(t) dt}''')]
-  
-  data = []
-  for i in range (0,9):
-      data.append({
-        #"Formule":rf"C:\Users\Korisnik\Desktop\AnalizaSignala-1\Formule/{i}.png",
-        "Values":index[i],
-        "":str(rounded_values[i]) + mjerne_jedinice[i],
-      })
-  table = pd.DataFrame(data)
-    
   
   st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,on=True))
-  #st.dataframe(ttable,width=300,hide_index=True)
   
-  st.dataframe(table,
+  for i in range (0,9):
+      
+      dataframe = pd.DataFrame(
+        {
+            "apps": [
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/1.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/2.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/3.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/4.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/5.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/6.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/7.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/8.png",
+                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/9.png",
+            ],
+            "Values":["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "],
+            "":(rounded_values),
+             "mjerne_jedinice": [" V"," V"," V"," V"," V"," V"," %"," W"," dBW"]
+        }
+    )
+  st.dataframe(dataframe,
                  hide_index=1,
-                 column_config={"Forumule":st.column_config.ImageColumn("Formule")},
+                 column_config={"apps":st.column_config.ImageColumn("Formule",width="medium")},
                  width=450
                 )
   faza_on = st.checkbox("Fazna karakteristike singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
