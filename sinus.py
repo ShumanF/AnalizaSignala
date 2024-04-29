@@ -58,13 +58,14 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   return fig
 
 @st.cache_data
-def gen_plot(signal,Umax,Umin,Udc,Uef,on):
+def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
     fig = plt.figure(figsize=(12,6))
     #plt.style.use('default')  #Solarize_Light2 #default
     fig.patch.set_facecolor('xkcd:cream')
     plt.grid(True)
     plt.xlabel("time[seconds] * sample rate", fontsize=12)
     plt.ylabel("Amplituda $u(t)$ [V]", fontsize=19)
+    plt.ylim(donji_lim,gornji_lim)
     if on:
       plt.title("Analiza Generiranog Singalnog Val",fontsize=19,fontweight='bold')
       plt.plot(signal,lw=1.9,color='cornflowerblue')
@@ -120,7 +121,7 @@ if __name__ == '__main__':
 
   st.header("ANALIZA SIGNALA")
 
-  sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 44100,22050)  
+  sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 96000,22050) #Default SR 22050Hz, Max 96k Hz   
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")  
   amplitude = st.sidebar.number_input("Odaberi amplitudu [V]", 0.1, 1000.0,1.)
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
@@ -140,12 +141,26 @@ if __name__ == '__main__':
 
   if pick_wave_gen == 'Uploaded File':
      t = len(signal)
-
-    
+  
   signal = np.exp(-t*prigušenje) * signal
-  start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
 
-  st.write(gen_plot(signal[start:end],Umax=0,Umin=0,Udc=0,Uef=0,on=False))
+  Umax = max(signal)
+  Umin = min(signal)
+  Upp = Umax-Umin
+  Udc = dc_component(signal)
+  Uef = efective(signal)
+  standard_deviation = sp.ndimage.standard_deviation(signal[:N_uzoraka])
+  #gamma = 'inf' if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
+  gamma = float('inf') if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
+  Psr = Uef**2
+  Psr_dBW = 20 * np.log10(Uef)
+
+  start,end = st.slider('Podesi slider za ublizavanje na val (skalirano je po sampling * vrijeme, slider ide od 0 do N samples)',0, sample_rate*time,(0,sample_rate))    
+  donji_lim,gornji_lim = st.slider('Podesi slider za ublizavanje na amplitude',-Upp,Upp,(-Upp,Upp))
+
+  dugme  = st.toggle('Prikazi na grafu Upp,Udc,Uef')
+
+  st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
   
   # Pretvaranje u 16-bit range
   audio = np.int16(signal * 32767)
@@ -157,24 +172,13 @@ if __name__ == '__main__':
   st.audio(buffer,"audio/wav",sample_rate)
 
   st.write("Analiza signala [uzima se do prvih 1,2M uzoraka]")
-
-  Umax = max(signal[:N_uzoraka])
-  Umin = min(signal[:N_uzoraka])
-  Upp = Umax - Umin
-  Udc = dc_component(signal)
-  Uef = efective(signal)
-  standard_deviation = sp.ndimage.standard_deviation(signal[:N_uzoraka])
-  #gamma = 'inf' if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
-  gamma = float('inf') if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
-  Psr = Uef**2
-  Psr_dBW = 20 * np.log10(Uef) 
         
   rounded_values = [str(round(x,5)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
           
   index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
   mjerne_jedinice = [" V"," V"," V"," V"," V"," V"," %"," W"," dBW"]
   
-  st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,on=True))
+  #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=True))
   
   for i in range (0,9):
       
