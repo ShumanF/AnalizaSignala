@@ -155,7 +155,7 @@ if __name__ == '__main__':
   Psr = Uef**2
   Psr_dBW = 20 * np.log10(Uef)
 
-  start,end = st.slider('Podesi slider za vremenski zoom na val (skalirano je po sampling * vrijeme, slider ide od 0 do t *N samples)',0, sample_rate*time,(0,sample_rate))    
+  start,end = st.slider('Podesi slider za vremenski zoom na val (skalirano je po sampling * vrijeme, slider ide od 0 do t * N samples)',0, sample_rate*time,(0,sample_rate))    
   donji_lim,gornji_lim = st.slider('Podesi slider za ublizavanje na amplitude',-Upp,Upp,(-Upp,Upp))
 
   dugme  = st.toggle('Prikazi na grafu Upp,Udc,Uef')
