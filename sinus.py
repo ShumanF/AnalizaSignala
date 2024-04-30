@@ -200,7 +200,7 @@ if __name__ == '__main__':
   st.dataframe(dataframe,
                use_container_width=True,
                hide_index=True,
-               column_config={"apps":st.column_config.ImageColumn("Formule")},
+               column_config={"Formule":st.column_config.ImageColumn("Formule")},
               )
   faza_on = st.checkbox("Fazna karakteristike singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
   frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
