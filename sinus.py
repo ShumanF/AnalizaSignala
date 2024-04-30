@@ -194,7 +194,7 @@ if __name__ == '__main__':
       ],
   "Values":["Umax [V]","Umin [V]","Upp [V]",
   "Udc [V]","Uef [V]","Stanardna devijacija: σ [V]",
-  "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr_dBW "],
+  "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr [dBW] "],
   "":(rounded_values),
       
     }
