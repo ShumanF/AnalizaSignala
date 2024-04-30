@@ -178,28 +178,28 @@ if __name__ == '__main__':
 
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=True))
   
-  for i in range (0,9):
+
+  
+  dataframe = pd.DataFrame(
+    {
+    "apps": [
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/1.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/2.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/3.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/4.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/5.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/6.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/7.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/8.png",
+        "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/9.png",
+      ],
+  "Values":["Umax [V]","Umin [V]","Upp [V]",
+  "Udc [V]","Uef [V]","Stanardna devijacija: σ [V]",
+  "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr_dBW "],
+  "":(rounded_values),
       
-      dataframe = pd.DataFrame(
-        {
-        "apps": [
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/1.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/2.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/3.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/4.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/5.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/6.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/7.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/8.png",
-            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/9.png",
-          ],
-      "Values":["Umax [V]","Umin [V]","Upp [V]",
-      "Udc [V]","Uef [V]","Stanardna devijacija: σ [V]",
-      "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr_dBW "],
-      "":(rounded_values),
-          
-        }
-    )
+    }
+)
   st.dataframe(dataframe,
                  hide_index=True,
                  column_config={"apps":st.column_config.ImageColumn("Formule",width="medium")},
