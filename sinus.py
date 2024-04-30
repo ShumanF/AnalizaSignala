@@ -177,11 +177,9 @@ if __name__ == '__main__':
 
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=True))
   
-
-  
   dataframe = pd.DataFrame(
     {
-    "apps": [
+    "Formule": [
         "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/1.png",
         "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/2.png",
         "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/3.png",
