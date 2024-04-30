@@ -173,37 +173,37 @@ if __name__ == '__main__':
 
   st.write("Analiza signala [uzima se do prvih 1,2M uzoraka]")
         
-  rounded_values = [str(round(x,5)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
+  rounded_values = [str(round(x,7)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
           
-  index= ["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "]
-  mjerne_jedinice = [" V"," V"," V"," V"," V"," V"," %"," W"," dBW"]
-  
+
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=True))
   
   for i in range (0,9):
       
       dataframe = pd.DataFrame(
         {
-            "apps": [
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/1.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/2.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/3.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/4.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/5.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/6.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/7.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/8.png",
-                "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/9.png",
-            ],
-            "Values":["Umax","Umin","Upp","Udc","Uef","σ[stanardna devijacija]","γ [faktor valovitosti]","Psr/SNR","Psr_dBW "],
-            "":(rounded_values),
-             "mjerne_jedinice": [" V"," V"," V"," V"," V"," V"," %"," W"," dBW"]
+        "apps": [
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/1.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/2.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/3.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/4.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/5.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/6.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/7.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/8.png",
+            "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/9.png",
+          ],
+      "Values":["Umax [V]","Umin [V]","Upp [V]",
+      "Udc [V]","Uef [V]","Stanardna devijacija: σ [V]",
+      "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr_dBW "],
+      "":(rounded_values),
+          
         }
     )
   st.dataframe(dataframe,
-                 hide_index=1,
+                 hide_index=True,
                  column_config={"apps":st.column_config.ImageColumn("Formule",width="medium")},
-                 width=450
+                 width=650
                 )
   faza_on = st.checkbox("Fazna karakteristike singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
   frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
