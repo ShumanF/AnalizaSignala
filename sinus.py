@@ -45,14 +45,13 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   signal = signal[:N_uzoraka]
   magnituda = np.abs( np.fft.fft(signal) )
   frequency = np.fft.fftfreq(len(signal), d=1/sample_rate)
-  magnituda_dB = 20 * np.log10(magnituda)
-
+  
   fig = plt.figure(figsize=(15,7))
-  plt.plot(frequency,magnituda_dB)
+  plt.plot(frequency,magnituda)
   plt.xlim(0,sample_rate/2)
   plt.title('Frekvencijiski Spektar',fontsize=19,fontweight='bold')
   plt.xlabel("Frequency (Hz)",fontsize=14,fontweight='bold')
-  plt.ylabel("Magnitude [dB]",fontsize=14,fontweight='bold')
+  plt.ylabel("Magnituda",fontsize=14,fontweight='bold')
   plt.grid()
   plt.show()
   return fig
