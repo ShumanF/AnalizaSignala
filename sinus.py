@@ -177,11 +177,9 @@ if __name__ == '__main__':
 
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=True))
   
-
-  
   dataframe = pd.DataFrame(
     {
-    "apps": [
+    "Formule": [
         "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/1.png",
         "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/2.png",
         "https://raw.githubusercontent.com/ShumanF/AnalizaSignala/master/Formule/3.png",
@@ -194,7 +192,7 @@ if __name__ == '__main__':
       ],
   "Values":["Umax [V]","Umin [V]","Upp [V]",
   "Udc [V]","Uef [V]","Stanardna devijacija: σ [V]",
-  "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr_dBW "],
+  "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr [dBW] "],
   "":(rounded_values),
       
     }
@@ -202,7 +200,7 @@ if __name__ == '__main__':
   st.dataframe(dataframe,
                use_container_width=True,
                hide_index=True,
-               column_config={"apps":st.column_config.ImageColumn("Formule")},
+               column_config={"Formule":st.column_config.ImageColumn("Formule")},
               )
   faza_on = st.checkbox("Fazna karakteristike singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
   frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
