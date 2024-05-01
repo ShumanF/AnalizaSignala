@@ -132,6 +132,11 @@ if __name__ == '__main__':
         "Sin","Cos","Sawtooth","Triangle","Square","White noise","Brown noise","Uploaded File"
     ]
     )
+  
+  
+  #st.sidebar.button("Generate y1")
+  #st.sidebar.button("Generate y2")
+
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
     
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
@@ -158,7 +163,12 @@ if __name__ == '__main__':
   donji_lim,gornji_lim = st.slider('Podesi slider za ublizavanje na amplitude',-Upp,Upp,(-Upp,Upp))
 
   dugme  = st.toggle('Prikazi na grafu Upp,Udc,Uef')
-
+  
+  #col1, col2, col3 = st.columns(3)
+  #col1.button("y1 + y2")
+  #col2.button("y1 * y2")
+  #col3.button("Undo")
+  
   st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
   
   # Pretvaranje u 16-bit range
@@ -167,6 +177,7 @@ if __name__ == '__main__':
   buffer = io.BytesIO()
   sp.io.wavfile.write(buffer, sample_rate, audio)
   buffer.seek(0)
+
   st.subheader('Zvuk generiranog signala')
   st.audio(buffer,"audio/wav",sample_rate)
 
