@@ -82,8 +82,8 @@ def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
 #def generate_wave(y):
 
 @st.cache_data
-def generate_sine_wave(amplitude, frequency, t):
-    return amplitude * np.sin(2 * np.pi * t * frequency)
+def generate_sine_wave(amplitude, frequency, t, faza):
+    return amplitude * np.sin(2 * np.pi * t * frequency + faza)
 @st.cache_data
 def generate_cosine_wave(amplitude, frequency, t):
     return amplitude * np.cos(2 * np.pi * t * frequency)
@@ -98,11 +98,12 @@ def generate_square_wave(amplitude, frequency, t):
     return amplitude * sp.signal.square(2 * np.pi * t * frequency)
 
     
-def switch_waves(option,amplitude = 1,time = 1,frequency = 1,sample_rate = 22050,uploaded_file = None):
+def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate = 22050,uploaded_file = None):
   
    t = np.linspace(0, time, int(sample_rate * time), endpoint=False)
+   faza = np.deg2rad(faza)
    options = {
-            "Sin": generate_sine_wave(amplitude,frequency,t),
+            "Sin": generate_sine_wave(amplitude,frequency,t,faza),
             "Cos":  generate_cosine_wave(amplitude,frequency,t),
             "Sawtooth": generate_sawtooth_wave(amplitude,frequency,t),
             "Triangle": generate_triangle_wave(amplitude, frequency, t),
@@ -140,7 +141,7 @@ if __name__ == '__main__':
 
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
     
-  signal = switch_waves(pick_wave_gen,amplitude,time,frequency,sample_rate,uploaded_file=uploaded_file)
+  signal = switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
 
   t = np.arange(0, 1, 1/(sample_rate * time)) 
 
