@@ -95,11 +95,14 @@ def gen_bokeh_plot(t,signal,Umax,Umin,Upp,Udc,Uef,on=False):
              )
   p.border_fill_color = "#ffffc2"
   p.line(t,signal,line_width=2,line_color='#4569d6')
-  
+ 
   if on:
-     max = Span(location=Umax,dimension='width',line_color='red', line_dash='dashed', line_width=2)
-     p.add_layout(max)
-  
+
+    p.line(t, Umax, line_color='red', line_dash='dashed', legend_label='Umax', line_width=2)
+    p.line(t, Umin, line_color='red', line_dash='dashed', legend_label='Umin', line_width=2)
+    p.line(t, Udc, line_color='green', line_dash='dashed', legend_label='Udc', line_width=2)
+    p.line(t, Uef, line_color='blue', line_dash='dashed', legend_label='Uef', line_width=2)
+      
   return p
      
 
