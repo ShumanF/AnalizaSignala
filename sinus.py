@@ -102,7 +102,6 @@ def gen_bokeh_plot(t,signal,Umax,Umin,Upp,Udc,Uef,on=False):
   
   return p
      
-#def generate_wave(y):
 
 @st.cache_data
 def generate_sine_wave(amplitude, t, frequency, faza):
@@ -193,7 +192,7 @@ if __name__ == '__main__':
   Psr_dBW = 20 * np.log10(Uef)
 
   start,end = st.slider('Podesi slider za vremenski zoom na val (skalirano je po sampling * vrijeme, slider ide od 0 do t * N samples)',0, sample_rate*time,(0,sample_rate))    
-  donji_lim,gornji_lim = st.slider('Podesi slider za ublizavanje na amplitude',-Upp,Upp,(-Upp,Upp))
+  #donji_lim,gornji_lim = st.slider('Podesi slider za ublizavanje na amplitude',-Upp,Upp,(-Upp,Upp))
 
   dugme  = st.toggle('Prikazi na grafu Upp,Udc,Uef')
   
@@ -203,8 +202,8 @@ if __name__ == '__main__':
   #col3.button("Undo")
   
   
-  st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
-  #signal = signal[::15]
+  #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
+  
   st.bokeh_chart(gen_bokeh_plot(t[start:end],signal[start:end],Umax,Umin,Upp,Udc,Uef,on=dugme),use_container_width = False)
   
   # Pretvaranje u 16-bit range
