@@ -45,17 +45,17 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   signal = signal[:N_uzoraka]
   magnituda = np.abs( np.fft.fft(signal) )
   frequency = np.fft.fftfreq(len(signal), d=1/sample_rate)
-  
-  fig = plt.figure(figsize=(15,7))
-  plt.plot(frequency,magnituda)
-  plt.xlim(0,sample_rate/2)
-  plt.title('Frekvencijiski Spektar',fontsize=19,fontweight='bold')
-  plt.xlabel("Frequency (Hz)",fontsize=14,fontweight='bold')
-  plt.ylabel("Magnituda",fontsize=14,fontweight='bold')
-  plt.grid()
-  plt.show()
-  return fig
-
+  frequency = np.abs(frequency)
+  #fig = plt.figure(figsize=(15,7))
+  #plt.plot(frequency,magnituda)
+  #plt.xlim(0,sample_rate/2)
+  #plt.title('Frekvencijiski Spektar',fontsize=19,fontweight='bold')
+  #plt.xlabel("Frequency (Hz)",fontsize=14,fontweight='bold')
+  #plt.ylabel("Magnituda",fontsize=14,fontweight='bold')
+  #plt.grid()
+  #plt.show()
+  data = pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
+  return data[::10]
 @st.cache_data
 def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
     fig = plt.figure(figsize=(12,6))
@@ -125,6 +125,7 @@ if __name__ == '__main__':
   amplitude = st.sidebar.number_input("Odaberi amplitudu [V]", 0.1, 1000.0,1.)
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
   time = st.sidebar.number_input("Odaberi trajanje u sekundama [s]", 1, 60)
+  faza = st.sidebar.slider("Odaberi fazu signala (stupnjevi)",-360,360,0)
   prigušenje = st.sidebar.slider("Prigusenje vala formulom $$e^{-\lambda t} \cdot signal$$ slider podesava λ :",0.0, 10.0, 0.0)
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
@@ -201,11 +202,12 @@ if __name__ == '__main__':
                use_container_width=True,
                hide_index=True,
                column_config={"Formule":st.column_config.ImageColumn("Formule")},
+              
               )
   faza_on = st.checkbox("Fazna karakteristike singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
   frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
   if faza_on:
     st.write(faza_vala_plot(signal))
   if frequency_spectrum:
-     st.write(plot_frekvencijski_spekar(signal,sample_rate))
+     st.line_chart((plot_frekvencijski_spekar(signal,sample_rate)), x='frekvencija', y = 'magnituda')
 
