@@ -98,10 +98,10 @@ def gen_bokeh_plot(t,signal,Umax,Umin,Upp,Udc,Uef,on=False):
  
   if on:
 
-    p.line(t, Umax, line_color='red', line_dash='dashed', legend_label='Umax', line_width=2)
-    p.line(t, Umin, line_color='red', line_dash='dashed', legend_label='Umin', line_width=2)
-    p.line(t, Udc, line_color='green', line_dash='dashed', legend_label='Udc', line_width=2)
-    p.line(t, Uef, line_color='blue', line_dash='dashed', legend_label='Uef', line_width=2)
+    p.line(t, Umax, line_color='red', line_dash='dashed', legend_label= f'Umax={Umax:.3f}', line_width=1.5)
+    p.line(t, Umin, line_color='red', line_dash='dashed', legend_label= f'Umin={Umin:.3f}', line_width=1.5)
+    p.line(t, Udc, line_color='green', line_dash='dashed', legend_label=f'Udc={Udc:.3f}', line_width=1.5)
+    p.line(t, Uef, line_color='blue', line_dash='dashed', legend_label=f'Uef={Uef:.3f}', line_width=1.5)
       
   return p
      
