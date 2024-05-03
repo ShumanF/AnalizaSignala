@@ -173,7 +173,7 @@ if __name__ == '__main__':
     
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
 
-  t = np.arange(0, 1, 1/(sample_rate * time)) 
+  t = np.linspace(0, time, (sample_rate * time)) 
 
   if pick_wave_gen == 'Uploaded File':
      t = len(signal)
