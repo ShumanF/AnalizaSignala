@@ -5,6 +5,9 @@ import pandas as pd
 import streamlit as st
 import librosa
 import io
+from bokeh.plotting import figure
+from bokeh.models import Span
+
 N_uzoraka = 1200000
 
 @st.cache_data
@@ -55,7 +58,8 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   #plt.grid()
   #plt.show()
   data = pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
-  return data[::10]
+  return data
+
 @st.cache_data
 def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
     fig = plt.figure(figsize=(12,6))
@@ -79,23 +83,47 @@ def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
     plt.close(fig)
     return fig
 
+@st.cache_resource
+def gen_bokeh_plot(t,signal,Umax,Umin,Upp,Udc,Uef,on=False):
+  #signal= signal[:10]
+  p = figure(title="Generirani Signalni Val",
+             x_axis_label=r'\[vrijeme [seconds] \]',
+             y_axis_label=r'\[Amplituda  u(t) [V]\]',
+             height = 400,width=800,
+             y_range=(-Upp,Upp),
+             #toolbar_location="above"
+             )
+  p.border_fill_color = "#ffffc2"
+  p.line(t,signal,line_width=2,line_color='#4569d6')
+  
+  if on:
+     max = Span(location=Umax,dimension='width',line_color='red', line_dash='dashed', line_width=2)
+     p.add_layout(max)
+  
+  return p
+     
 #def generate_wave(y):
 
 @st.cache_data
-def generate_sine_wave(amplitude, frequency, t, faza):
+def generate_sine_wave(amplitude, t, frequency, faza):
     return amplitude * np.sin(2 * np.pi * t * frequency + faza)
+
 @st.cache_data
-def generate_cosine_wave(amplitude, frequency, t):
-    return amplitude * np.cos(2 * np.pi * t * frequency)
+def generate_cosine_wave(amplitude, t, frequency, faza):
+    return amplitude * np.cos(2 * np.pi * t * frequency + faza)
+
 @st.cache_data
-def generate_sawtooth_wave(amplitude, frequency, t):
-    return amplitude * sp.signal.sawtooth(2 * np.pi * t * frequency, width=1)
+def generate_sawtooth_wave(amplitude, t, frequency, faza):
+    return amplitude * sp.signal.sawtooth(2 * np.pi * t * frequency + faza, width=1)
+
 @st.cache_data
-def generate_triangle_wave(amplitude, frequency, t):
-    return amplitude * sp.signal.sawtooth(2 * np.pi * t * frequency, width=0.5)
+def generate_triangle_wave(amplitude, t, frequency, faza):
+    return amplitude * sp.signal.sawtooth(2 * np.pi * t * frequency + faza, width=0.5)
+
 @st.cache_data
-def generate_square_wave(amplitude, frequency, t):
-    return amplitude * sp.signal.square(2 * np.pi * t * frequency)
+def generate_square_wave(amplitude, t, frequency, faza):
+    return amplitude * sp.signal.square(2 * np.pi * t * frequency + faza)
+
 
     
 def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate = 22050,uploaded_file = None):
@@ -103,11 +131,11 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate 
    t = np.linspace(0, time, int(sample_rate * time), endpoint=False)
    faza = np.deg2rad(faza)
    options = {
-            "Sin": generate_sine_wave(amplitude,frequency,t,faza),
-            "Cos":  generate_cosine_wave(amplitude,frequency,t),
-            "Sawtooth": generate_sawtooth_wave(amplitude,frequency,t),
-            "Triangle": generate_triangle_wave(amplitude, frequency, t),
-            "Square": generate_square_wave(amplitude, frequency, t),
+            "Sin": generate_sine_wave(amplitude, t, frequency, faza),
+            "Cos": generate_cosine_wave(amplitude, t, frequency, faza),
+            "Sawtooth": generate_sawtooth_wave(amplitude, t, frequency, faza),
+            "Triangle": generate_triangle_wave(amplitude, t, frequency, faza),
+            "Square": generate_square_wave(amplitude, t, frequency, faza),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
             "Uploaded File": None if uploaded_file is None else librosa.load(uploaded_file,sr=sample_rate)[0]
@@ -123,11 +151,14 @@ if __name__ == '__main__':
 
   sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 96000,22050) #Default SR 22050Hz, Max 96k Hz   
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")  
+  
   amplitude = st.sidebar.number_input("Odaberi amplitudu [V]", 0.1, 1000.0,1.)
   frequency = st.sidebar.number_input("Odaberi frekevenciju [Hz]", 1, int(sample_rate/2)) #nyquist frequency
   time = st.sidebar.number_input("Odaberi trajanje u sekundama [s]", 1, 60)
   faza = st.sidebar.slider("Odaberi fazu signala (stupnjevi)",-360,360,0)
+  
   prigušenje = st.sidebar.slider("Prigusenje vala formulom $$e^{-\lambda t} \cdot signal$$ slider podesava λ :",0.0, 10.0, 0.0)
+  
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
     [
@@ -171,7 +202,10 @@ if __name__ == '__main__':
   #col2.button("y1 * y2")
   #col3.button("Undo")
   
+  
   st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
+  #signal = signal[::15]
+  st.bokeh_chart(gen_bokeh_plot(t[start:end],signal[start:end],Umax,Umin,Upp,Udc,Uef,on=dugme),use_container_width = False)
   
   # Pretvaranje u 16-bit range
   audio = np.int16(signal * 32767)
