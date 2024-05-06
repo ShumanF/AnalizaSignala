@@ -89,7 +89,7 @@ def gen_bokeh_plot(t,signal,Umax,Umin,Upp,Udc,Uef,on=False):
   p = figure(title="Generirani Signalni Val",
              x_axis_label=r'\[vrijeme [seconds] \]',
              y_axis_label=r'\[Amplituda  u(t) [V]\]',
-             height = 400,width=800,
+             height = 400,width=750,
              y_range=(-Upp,Upp),
              #toolbar_location="above"
              )
@@ -97,7 +97,6 @@ def gen_bokeh_plot(t,signal,Umax,Umin,Upp,Udc,Uef,on=False):
   p.line(t,signal,line_width=2,line_color='#4569d6')
  
   if on:
-
     p.line(t, Umax, line_color='red', line_dash='dashed', legend_label= f'Umax={Umax:.3f}', line_width=1.5)
     p.line(t, Umin, line_color='red', line_dash='dashed', legend_label= f'Umin={Umin:.3f}', line_width=1.5)
     p.line(t, Udc, line_color='green', line_dash='dashed', legend_label=f'Udc={Udc:.3f}', line_width=1.5)
@@ -126,8 +125,16 @@ def generate_triangle_wave(amplitude, t, frequency, faza):
 def generate_square_wave(amplitude, t, frequency, faza):
     return amplitude * sp.signal.square(2 * np.pi * t * frequency + faza)
 
+@st.cache_data
+def gen_audio(signal,sample_rate):
+  # Pretvaranje u 16-bit range
+  audio = np.int16(signal * 32767)
+  #  Wav file
+  buffer = io.BytesIO()
+  sp.io.wavfile.write(buffer, sample_rate, audio)
+  buffer.seek(0)
+  st.audio(buffer,"audio/wav",sample_rate)
 
-    
 def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate = 22050,uploaded_file = None):
   
    t = np.linspace(0, time, int(sample_rate * time), endpoint=False)
@@ -147,10 +154,16 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate 
    return options.get(option,"Default")
 
 
+
 if __name__ == '__main__':
+
 
   st.header("ANALIZA SIGNALA")
 
+  
+  gen_y1 = st.sidebar.button("Generate y1")
+  gen_y2 = st.sidebar.button("Generate y2")
+  
   sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 96000,22050) #Default SR 22050Hz, Max 96k Hz   
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")  
   
@@ -168,14 +181,12 @@ if __name__ == '__main__':
     ]
     )
   
-  
-  #st.sidebar.button("Generate y1")
-  #st.sidebar.button("Generate y2")
-
   uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
     
   signal = switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
 
+  #generiranje = st.sidebar.toggle("Lijevo y1 Desno y2")
+  
   t = np.linspace(0, time, (sample_rate * time)) 
 
   if pick_wave_gen == 'Uploaded File':
@@ -206,18 +217,31 @@ if __name__ == '__main__':
   
   
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
-  
-  st.bokeh_chart(gen_bokeh_plot(t[start:end],signal[start:end],Umax,Umin,Upp,Udc,Uef,on=dugme),use_container_width = False)
-  
-  # Pretvaranje u 16-bit range
-  audio = np.int16(signal * 32767)
-  #  Wav file
-  buffer = io.BytesIO()
-  sp.io.wavfile.write(buffer, sample_rate, audio)
-  buffer.seek(0)
 
-  st.subheader('Zvuk generiranog signala')
-  st.audio(buffer,"audio/wav",sample_rate)
+  if 'y1' not in st.session_state:
+    st.session_state.y1 = np.sin(2*np.pi*t) #primjerni val kada se ucitava stranica
+  if 'y2' not in st.session_state:
+    st.session_state.y2 = []              #drugi val je prazan dok ga korisnik ne definira
+
+  if gen_y1:
+    st.session_state.y1 = signal
+  if gen_y2:
+     st.session_state.y2 = signal
+  
+  t = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
+
+  st.bokeh_chart(gen_bokeh_plot(t,y1,Umax,Umin,Upp,Udc,Uef,on=dugme),use_container_width = False) # prvi osnovni val
+  st.subheader('Zvuk #1 generiranog signala')
+  gen_audio(y1,sample_rate)
+
+  if len(y2) != 0: 
+    st.bokeh_chart(gen_bokeh_plot(t,y2,Umax,Umin,Upp,Udc,Uef,on=False),use_container_width=False) # drugi val po izboru
+    brisanje = st.button('Izbrisi graf #2 (stisni dva puta)')
+    if brisanje:
+      st.session_state.y2 = []
+    st.subheader('Zvuk #2 generiranog signala')
+    gen_audio(y2,sample_rate)
+    
 
   st.write("Analiza signala [uzima se do prvih 1,2M uzoraka]")
         
