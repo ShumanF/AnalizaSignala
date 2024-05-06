@@ -84,8 +84,10 @@ def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
     return fig
 
 @st.cache_resource
-def gen_bokeh_plot(t,signal,Umax,Umin,Upp,Udc,Uef,on=False):
+def gen_bokeh_plot(t,signal,Udc,Uef,on=False):
   #signal= signal[:10]
+  Umax=max(signal); Umin=min(signal)
+  Upp = max(signal) - min(signal)
   p = figure(title="Generirani Signalni Val",
              x_axis_label=r'\[vrijeme [seconds] \]',
              y_axis_label=r'\[Amplituda  u(t) [V]\]',
@@ -210,9 +212,9 @@ if __name__ == '__main__':
 
   dugme  = st.toggle('Prikazi na grafu Upp,Udc,Uef')
   
-  #col1, col2, col3 = st.columns(3)
-  #col1.button("y1 + y2")
-  #col2.button("y1 * y2")
+  col1, col2, col3 = st.columns(3)
+  zbrajanje = col1.button("y1 + y2")
+  mnozenje = col2.button("y1 * y2")
   #col3.button("Undo")
   
   
@@ -230,20 +232,35 @@ if __name__ == '__main__':
   
   t = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
 
-  st.bokeh_chart(gen_bokeh_plot(t,y1,Umax,Umin,Upp,Udc,Uef,on=dugme),use_container_width = False) # prvi osnovni val
-  st.subheader('Zvuk #1 generiranog signala')
-  gen_audio(y1,sample_rate)
+  tab1, tab2, tab3 = st.tabs(["Main", "Zbrajanje", "Mnozenje"])
 
-  if len(y2) != 0: 
-    st.bokeh_chart(gen_bokeh_plot(t,y2,Umax,Umin,Upp,Udc,Uef,on=False),use_container_width=False) # drugi val po izboru
-    brisanje = st.button('Izbrisi graf #2 (stisni dva puta)')
-    if brisanje:
-      st.session_state.y2 = []
-    st.subheader('Zvuk #2 generiranog signala')
-    gen_audio(y2,sample_rate)
+  with tab1:
+    # prvi osnovni val
+    st.bokeh_chart(gen_bokeh_plot(t,y1,Udc,Uef,on=dugme),use_container_width = False)
+    st.subheader('Zvuk #1 generiranog signala')
+    gen_audio(y1,sample_rate)
+
+    # drugi val po izboru
+    if len(y2) != 0: 
+      st.bokeh_chart(gen_bokeh_plot(t,y2,Udc,Uef,on=False),use_container_width=False) 
+      brisanje = st.button('Izbrisi graf #2 (stisni dva puta)')
+      if brisanje:
+        st.session_state.y2 = []
+      st.subheader('Zvuk #2 generiranog signala')
+      gen_audio(y2,sample_rate)
+
+  with tab2:
+     sum = y1 + y2
+     st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
+     #gen_audio(sum,22050)  
+
+  with tab3:
+    sum = y1 * y2
+    st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
+    #gen_audio(sum,22050) 
+
     
-
-  st.write("Analiza signala [uzima se do prvih 1,2M uzoraka]")
+  st.write("Analiza #1 signala [uzima se do prvih 1,2M uzoraka]")
         
   rounded_values = [str(round(x,7)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
           
