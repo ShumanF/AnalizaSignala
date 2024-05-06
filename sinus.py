@@ -207,14 +207,17 @@ if __name__ == '__main__':
   Psr = Uef**2
   Psr_dBW = 20 * np.log10(Uef)
 
-  start,end = st.slider('Podesi slider za vremenski zoom na val (skalirano je po sampling * vrijeme, slider ide od 0 do t * N samples)',0, sample_rate*time,(0,sample_rate))    
+  start,end = st.slider('Podesi slider za vremenski zoom na val (skalirano je po sampling * vrijeme, slider ide od 0 do t * N samples)'
+                        ,0, sample_rate*time,
+                        (0,sample_rate)
+                        )    
   #donji_lim,gornji_lim = st.slider('Podesi slider za ublizavanje na amplitude',-Upp,Upp,(-Upp,Upp))
 
   dugme  = st.toggle('Prikazi na grafu Upp,Udc,Uef')
   
-  col1, col2, col3 = st.columns(3)
-  zbrajanje = col1.button("y1 + y2")
-  mnozenje = col2.button("y1 * y2")
+  #col1, col2, col3 = st.columns(3)
+  #zbrajanje = col1.button("y1 + y2")
+  #mnozenje = col2.button("y1 * y2")
   #col3.button("Undo")
   
   
@@ -232,13 +235,13 @@ if __name__ == '__main__':
   
   t = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
 
-  tab1, tab2, tab3 = st.tabs(["Main", "Zbrajanje", "Mnozenje"])
+  tab1, tab2, tab3, tab4 = st.tabs(["Main", "Zbrajanje", "Mnozenje","Lissajousove krivulje "])
 
   with tab1:
     # prvi osnovni val
     st.bokeh_chart(gen_bokeh_plot(t,y1,Udc,Uef,on=dugme),use_container_width = False)
     st.subheader('Zvuk #1 generiranog signala')
-    gen_audio(y1,sample_rate)
+    gen_audio(y1,44100)
 
     # drugi val po izboru
     if len(y2) != 0: 
@@ -247,19 +250,44 @@ if __name__ == '__main__':
       if brisanje:
         st.session_state.y2 = []
       st.subheader('Zvuk #2 generiranog signala')
-      gen_audio(y2,sample_rate)
+      gen_audio(y2,44100)
 
   with tab2:
-     sum = y1 + y2
-     st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
-     #gen_audio(sum,22050)  
+    if len(y2) != 0:
+      sum = y1 + y2
+      st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
+      #gen_audio(sum,44100)  
+    else:
+      st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
+      st.markdown("""---""")
+
 
   with tab3:
-    sum = y1 * y2
-    st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
-    #gen_audio(sum,22050) 
+    if len(y2) != 0:
+      mul = y1 * y2
+      st.bokeh_chart(gen_bokeh_plot(t,mul,Udc=0,Uef=0),use_container_width=True)
+      #gen_audio(sum,44100)
+    else:
+        st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
+        st.markdown("""---""") 
+ 
 
-    
+  with tab4:
+     if len(y2) != 0:
+      st.scatter_chart(pd.DataFrame({'y1':y1,'y2':y2})[::10],
+                        x='y1',
+                        y='y2',
+                        color='#1cc91c',
+                        size=25
+                        #height=400,
+                        #width=700
+                        #use_container_width=True
+                        ) 
+     else:
+        st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
+        st.markdown("""---""") 
+
+
   st.write("Analiza #1 signala [uzima se do prvih 1,2M uzoraka]")
         
   rounded_values = [str(round(x,7)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
