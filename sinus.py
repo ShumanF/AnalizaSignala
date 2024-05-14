@@ -32,16 +32,9 @@ def efective(y):
 
 @st.cache_data
 def faza_vala_plot(signal):
-  signal = signal[:N_uzoraka]
-  fig = plt.figure(figsize=(15,8))
+  signal = signal[:N_uzoraka:5]
   faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
-  plt.scatter(signal,faza,alpha=0.3)
-  plt.title("Fazni Prostor",fontweight="bold")  
-  plt.xlabel("Amplituda $(x)$")
-  plt.ylabel("Faza ϕ ")
-  plt.grid(True)
-  plt.show()
-  return fig
+  return pd.DataFrame({'Signal':signal,'Faza':faza})
 
 @st.cache_data
 def plot_frekvencijski_spekar(signal,sample_rate):
@@ -59,6 +52,40 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   #plt.show()
   data = pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
   return data
+
+def plot_histogram_amplitude(signal):
+
+  #broj binova
+  N_bins = 11  
+  # Srijedna vrijednost i stand devijacija signala
+  mu, sigma = sp.stats.norm.fit(signal)
+
+  # Generate normal PDF/CDF
+  y_norm = np.linspace(min(signal), max(signal), 1000)
+  pdf_norm = sp.stats.norm.pdf(y_norm, mu, sigma)
+
+  # Plot histogram & normal distribution
+  fig, ax = plt.subplots(figsize=(10, 5))
+  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(min(signal), max(signal)),density=True,histtype='barstacked', alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue', label='Histogram of $y = \sin(x)$')
+  ax.plot(y_norm, pdf_norm, 'r-', linewidth=2, label=f'Fitted Normal Dist. ($\mu={mu:.2f}$, $\sigma={sigma:.2f}$)')
+
+  # Linija za srednju vrijednost
+  ax.axvline(mu, color='red', linestyle='dashed', linewidth=2, label=f'Mean: {mu:.2f}')
+
+  # Linije za stand devijaciju
+  ax.axvline(mu - sigma, color='green', linestyle='dashed', linewidth=2, label=f'Std Dev: {sigma:.2f}')
+  ax.axvline(mu + sigma, color='green', linestyle='dashed', linewidth=2)
+
+  # Label each bin
+  bin_labels = [f"[{edges[i]:.1f}, {edges[i+1]:.1f}>" for i in range(len(edges)-1)]
+  ax.set_xticks(edges[:-1] + np.diff(edges)/2)  # Oznaci sve na sredinu binova
+  ax.set_xticklabels(bin_labels, rotation=90)  # Rotiranje horizontalno da se vidi sve
+
+  plt.legend()
+  plt.grid(True)
+  plt.show()
+  return st.write(fig)
+
 
 @st.cache_data
 def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
@@ -287,7 +314,7 @@ if __name__ == '__main__':
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
         st.markdown("""---""") 
 
-
+  st.markdown("""---""")
   st.write("Analiza #1 signala [uzima se do prvih 1,2M uzoraka]")
         
   rounded_values = [str(round(x,7)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
@@ -321,10 +348,21 @@ if __name__ == '__main__':
                column_config={"Formule":st.column_config.ImageColumn("Formule")},
               
               )
+  st.markdown("""---""")
   faza_on = st.checkbox("Fazna karakteristike singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
   frequency_spectrum = st.checkbox("Frekvencijski spektar singala [uzima se prvih 1,2M uzoraka signala] (stisni gumb)")
-  if faza_on:
-    st.write(faza_vala_plot(signal))
-  if frequency_spectrum:
-     st.line_chart((plot_frekvencijski_spekar(signal,sample_rate)), x='frekvencija', y = 'magnituda')
+  histogram_amplitude = st.checkbox("Amplitudni histogram")
 
+  if faza_on:
+    st.write("FAZNI PROSTOR")
+    st.scatter_chart(faza_vala_plot(y1),x='Signal',y='Faza',size=25)
+
+  st.markdown("""---""")
+
+  if frequency_spectrum:
+     st.write("FREKVENCIJSKI SPEKTAR")
+     st.line_chart((plot_frekvencijski_spekar(y1,sample_rate)), x='frekvencija', y = 'magnituda')
+
+  if histogram_amplitude:
+     st.write("Histogram Amplitude")
+     plot_histogram_amplitude(y1)
