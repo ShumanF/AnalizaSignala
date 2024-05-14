@@ -64,7 +64,7 @@ def plot_histogram_amplitude(signal, N_bins, Amin, Amax):
 
   # Plot histogram & normal distribution
   fig, ax = plt.subplots(figsize=(10, 5))
-  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(Amin, Amax),density=True, alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue', label='Histogram of $y = \sin(x)$')
+  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(Amin, Amax),density=True, alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue')
   ax.plot(y_norm, pdf_norm, 'r-', linewidth=2, label=f'Fitted Normal Dist. ($\mu={mu:.2f}$, $\sigma={sigma:.2f}$)')
 
   # Linija za srednju vrijednost
