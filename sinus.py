@@ -53,7 +53,7 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   data = pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
   return data
 
-def plot_histogram_amplitude(signal,N_bins,Amin, Amax):
+def plot_histogram_amplitude(signal, N_bins, Amin, Amax):
 
   # Srijedna vrijednost i stand devijacija signala
   mu, sigma = sp.stats.norm.fit(signal)
@@ -64,7 +64,7 @@ def plot_histogram_amplitude(signal,N_bins,Amin, Amax):
 
   # Plot histogram & normal distribution
   fig, ax = plt.subplots(figsize=(10, 5))
-  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(Amin, Amax),density=True,histtype='barstacked', alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue', label='Histogram of $y = \sin(x)$')
+  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(Amin, Amax),density=True, alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue', label='Histogram of $y = \sin(x)$')
   ax.plot(y_norm, pdf_norm, 'r-', linewidth=2, label=f'Fitted Normal Dist. ($\mu={mu:.2f}$, $\sigma={sigma:.2f}$)')
 
   # Linija za srednju vrijednost
@@ -85,6 +85,18 @@ def plot_histogram_amplitude(signal,N_bins,Amin, Amax):
   #plt.show()
   return st.write(fig)
 
+def analiza_signala(signal):
+  Umax = max(signal)
+  Umin = min(signal)
+  Upp = Umax-Umin
+  Udc = dc_component(signal)
+  Uef = efective(signal)
+  standard_deviation = sp.ndimage.standard_deviation(signal[:N_uzoraka])
+  #gamma = 'inf' if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
+  gamma = float('inf') if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
+  Psr = Uef**2
+  Psr_dBW = 20 * np.log10(Uef)
+  return [str(round(x,7)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
 
 @st.cache_data
 def gen_plot(signal,Umax,Umin,Udc,Uef,donji_lim,gornji_lim,on):
@@ -220,18 +232,9 @@ if __name__ == '__main__':
   if pick_wave_gen == 'Uploaded File':
      t = len(signal)
   
-  signal = np.exp(-t*prigušenje) * signal
+  #signal = np.exp(-t*prigušenje) * signal
 
-  Umax = max(signal)
-  Umin = min(signal)
-  Upp = Umax-Umin
-  Udc = dc_component(signal)
-  Uef = efective(signal)
-  standard_deviation = sp.ndimage.standard_deviation(signal[:N_uzoraka])
-  #gamma = 'inf' if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
-  gamma = float('inf') if (standard_deviation/Udc) > 100000.0 else (standard_deviation/Udc) * 100
-  Psr = Uef**2
-  Psr_dBW = 20 * np.log10(Uef)
+
 
   start,end = st.slider('Podesi slider za vremenski zoom na val (skalirano je po sampling * vrijeme, slider ide od 0 do t * N samples)'
                         ,0, sample_rate*time,
@@ -255,24 +258,34 @@ if __name__ == '__main__':
     st.session_state.y2 = []              #drugi val je prazan dok ga korisnik ne definira
 
   if gen_y1:
-    st.session_state.y1 = signal
+    st.session_state.y1 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
   if gen_y2:
-     st.session_state.y2 = signal
+     st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
   
+  analiza_y1 = analiza_signala(st.session_state.y1)
+
+  if len(st.session_state.y2) != 0:
+    analiza_y2 = analiza_signala(st.session_state.y2)
+  else:
+     analiza_y2 = []
+
+  
+
   t = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
 
   tab1, tab2, tab3, tab4 = st.tabs(["Main", "Zbrajanje", "Mnozenje","Lissajousove krivulje "])
-
+  
+  # prvi osnovni val
   with tab1:
-    # prvi osnovni val
-    st.bokeh_chart(gen_bokeh_plot(t,y1,Udc,Uef,on=dugme),use_container_width = False)
+    
+    st.bokeh_chart(gen_bokeh_plot(t, y1, Udc = float(analiza_y1[3]), Uef = float(analiza_y1[4]), on = dugme), use_container_width = False)
     st.subheader('Zvuk #1 generiranog signala')
     gen_audio(y1,44100)
 
     # drugi val po izboru
     if len(y2) != 0: 
-      st.bokeh_chart(gen_bokeh_plot(t,y2,Udc,Uef,on=False),use_container_width=False) 
-      brisanje = st.button('Izbrisi graf #2 (stisni dva puta)')
+      st.bokeh_chart(gen_bokeh_plot(t, y2,  Udc = float(analiza_y2[3]), Uef = float(analiza_y2[4]), on = dugme),use_container_width=False) 
+      brisanje = st.button('Izbrisi graf #2 (stisni tri puta)')
       if brisanje:
         st.session_state.y2 = []
       st.subheader('Zvuk #2 generiranog signala')
@@ -315,9 +328,7 @@ if __name__ == '__main__':
 
   st.markdown("""---""")
   st.write("Analiza #1 signala [uzima se do prvih 1,2M uzoraka]")
-        
-  rounded_values = [str(round(x,7)) for x in [Umax,Umin,Upp,Udc,Uef,standard_deviation,gamma,Psr,Psr_dBW ]]
-          
+               
 
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=True))
   
@@ -337,10 +348,13 @@ if __name__ == '__main__':
   "Values":["Umax [V]","Umin [V]","Upp [V]",
   "Udc [V]","Uef [V]","Stanardna devijacija: σ [V]",
   "Faktor valovitosti: γ [%]","Srednja snaga na 1 Ω: Psr/SNR [W]","Psr [dBW] "],
-  "":(rounded_values),
+  "y1":(analiza_y1)
       
     }
 )
+  if len(analiza_y2) != 0:
+     dataframe["y2"] = analiza_y2  
+
   st.dataframe(dataframe,
                use_container_width=True,
                hide_index=True,
