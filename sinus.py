@@ -53,10 +53,7 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   data = pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
   return data
 
-def plot_histogram_amplitude(signal, N_bins, Amin, Amax):
-
-  # Srijedna vrijednost i stand devijacija signala
-  mu, sigma = sp.stats.norm.fit(signal)
+def plot_histogram_amplitude(signal, N_bins, Amin, Amax, mu, sigma):
 
   # Generate normal PDF/CDF
   y_norm = np.linspace(Amin, Amax,1000)
@@ -368,21 +365,41 @@ if __name__ == '__main__':
 
   if faza_on:
     st.write("FAZNI PROSTOR")
+    signal = st.session_state.y1
+    if(len(y2)!=0):
+      odabran_signal = st.radio("Odaberi da analiziras prvi ili drugi singal", ["signal #1","signal #2"])
+      if odabran_signal == 'signal #2':
+         signal = st.session_state.y2
     st.scatter_chart(faza_vala_plot(y1),x='Signal',y='Faza',size=25)
 
   st.markdown("""---""")
 
   if frequency_spectrum:
-     st.write("FREKVENCIJSKI SPEKTAR")
-     st.line_chart((plot_frekvencijski_spekar(y1,sample_rate)), x='frekvencija', y = 'magnituda')
+    st.write("FREKVENCIJSKI SPEKTAR")
+    signal = st.session_state.y1
+    if(len(y2)!=0):
+      odabran_signal = st.radio("Odaberi da analiziras prvi ili drugi singal", ["signal 1","signal 2"])
+      if odabran_signal == 'signal 2':
+         signal = st.session_state.y2
+    st.line_chart((plot_frekvencijski_spekar(signal,sample_rate)), x='frekvencija', y = 'magnituda')
 
   if histogram_amplitude:
     st.write("Histogram Amplitude")
+
     signal = y1
+    Umax = float(analiza_y1[0])
+    Umin = float(analiza_y1[1])
+    mu = float(analiza_y1[3])
+    sigma = float(analiza_y1[5])
+
     if(len(y2)!=0):
       odabran_signal = st.radio("Odaberi da analiziras prvi ili drugi singal", ["y1","y2"])
       if odabran_signal == 'y2':
-         signal = y2      
+        signal = y2
+        Umax = float(analiza_y2[0])
+        Umin = float(analiza_y2[1])
+        mu = float(analiza_y2[3])
+        sigma = float(analiza_y2[5])      
 
     col1, col2 = st.columns(2)
     
@@ -390,5 +407,5 @@ if __name__ == '__main__':
      N_bins = st.number_input("Odaberi broj razreda",3,99,11) # od 3 do 99, Default 11 bins
 
     with col2:
-      Amin, Amax = st.slider("Podesi slider za ulaze Amax i Amin",min(signal),max(signal),(min(signal),max(signal)))
-    plot_histogram_amplitude(signal,N_bins,Amin, Amax)
+      Amin, Amax = st.slider("Podesi slider za ulaze Amax i Amin",Umin,Umax,(Umin,Umax))
+    plot_histogram_amplitude(signal,N_bins, Amin, Amax, mu, sigma)
