@@ -53,20 +53,18 @@ def plot_frekvencijski_spekar(signal,sample_rate):
   data = pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
   return data
 
-def plot_histogram_amplitude(signal):
+def plot_histogram_amplitude(signal,N_bins,Amin, Amax):
 
-  #broj binova
-  N_bins = 11  
   # Srijedna vrijednost i stand devijacija signala
   mu, sigma = sp.stats.norm.fit(signal)
 
   # Generate normal PDF/CDF
-  y_norm = np.linspace(min(signal), max(signal), 1000)
+  y_norm = np.linspace(Amin, Amax,1000)
   pdf_norm = sp.stats.norm.pdf(y_norm, mu, sigma)
 
   # Plot histogram & normal distribution
   fig, ax = plt.subplots(figsize=(10, 5))
-  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(min(signal), max(signal)),density=True,histtype='barstacked', alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue', label='Histogram of $y = \sin(x)$')
+  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(Amin, Amax),density=True,histtype='barstacked', alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue', label='Histogram of $y = \sin(x)$')
   ax.plot(y_norm, pdf_norm, 'r-', linewidth=2, label=f'Fitted Normal Dist. ($\mu={mu:.2f}$, $\sigma={sigma:.2f}$)')
 
   # Linija za srednju vrijednost
@@ -81,9 +79,10 @@ def plot_histogram_amplitude(signal):
   ax.set_xticks(edges[:-1] + np.diff(edges)/2)  # Oznaci sve na sredinu binova
   ax.set_xticklabels(bin_labels, rotation=90)  # Rotiranje horizontalno da se vidi sve
 
+  plt.xlim(Amin, Amax)
   plt.legend()
   plt.grid(True)
-  plt.show()
+  #plt.show()
   return st.write(fig)
 
 
@@ -364,5 +363,18 @@ if __name__ == '__main__':
      st.line_chart((plot_frekvencijski_spekar(y1,sample_rate)), x='frekvencija', y = 'magnituda')
 
   if histogram_amplitude:
-     st.write("Histogram Amplitude")
-     plot_histogram_amplitude(y1)
+    st.write("Histogram Amplitude")
+    signal = y1
+    if(len(y2)!=0):
+      odabran_signal = st.radio("Odaberi da analiziras prvi ili drugi singal", ["y1","y2"])
+      if odabran_signal == 'y2':
+         signal = y2      
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+     N_bins = st.number_input("Odaberi broj razreda",3,99,11) # od 3 do 99, Default 11 bins
+
+    with col2:
+      Amin, Amax = st.slider("Podesi slider za ulaze Amax i Amin",min(signal),max(signal),(min(signal),max(signal)))
+    plot_histogram_amplitude(signal,N_bins,Amin, Amax)
