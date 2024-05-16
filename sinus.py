@@ -279,10 +279,10 @@ if __name__ == '__main__':
 
   t = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
 
-  tab1, tab2, tab3, tab4 = st.tabs(["Main", "Zbrajanje", "Mnozenje","Lissajousove krivulje "])
+  main, zbrajanje, mnozenje, lissajousove_krivulje = st.tabs(["Main", "Zbrajanje", "Mnozenje","Lissajousove krivulje "])
   
   # prvi osnovni val
-  with tab1:
+  with main:
     st.write("Prvi generirani val")
 
     st.bokeh_chart(gen_bokeh_plot(t, y1, Udc = float(analiza_y1[3]), Uef = float(analiza_y1[4]), on = dugme), use_container_width = False)
@@ -300,7 +300,7 @@ if __name__ == '__main__':
       st.subheader('Zvuk #2 generiranog signala')
       gen_audio(y2,44100)
 
-  with tab2:
+  with zbrajanje:
     if len(y2) != 0:
       sum = y1 + y2
       st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
@@ -310,7 +310,7 @@ if __name__ == '__main__':
       st.markdown("""---""")
 
 
-  with tab3:
+  with mnozenje:
     if len(y2) != 0:
       mul = y1 * y2
       st.bokeh_chart(gen_bokeh_plot(t,mul,Udc=0,Uef=0),use_container_width=True)
@@ -320,7 +320,7 @@ if __name__ == '__main__':
         st.markdown("""---""") 
  
 
-  with tab4:
+  with lissajousove_krivulje:
      if len(y2) != 0:
       st.scatter_chart(pd.DataFrame({'y1':y1,'y2':y2})[::10],
                         x='y1',
@@ -330,7 +330,19 @@ if __name__ == '__main__':
                         #height=400,
                         #width=700
                         #use_container_width=True
-                        ) 
+                        )
+      st.latex(r'''
+                \text{{Primjer oblika krivulja sa neparnim prirodnim brojem }} X, \text{{ parnim prirodnim brojem }} Y:\\
+                x = A \sin(Xt + \delta), \quad y = B \sin(Yt)
+              ''')
+      st.image(f"https://radioguy.files.wordpress.com/2016/11/lissajous-picture.png",width = 600)
+      #primjeri = st.radio("Primjeri",["None","δ = π/2, a = 1, b = 2 (1:2)","δ = π/2, a = 3, b = 2 (3:2)",
+      #                                "δ = π/2, a = 3, b = 4 (3:4)","δ = π/2, a = 5, b = 2 (5:4)"
+      #                                ])
+      
+      
+
+          
      else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
         st.markdown("""---""") 
