@@ -37,50 +37,59 @@ def faza_vala_plot(signal):
   return pd.DataFrame({'Signal':signal,'Faza':faza})
 
 @st.cache_data
-def plot_frekvencijski_spekar(signal,sample_rate):
+def plot_frekvencijski_spekar(signal,sample_rate,n):
+
   signal = signal[:N_uzoraka]
-  magnituda = np.abs( np.fft.fft(signal) )
-  frequency = np.fft.fftfreq(len(signal), d=1/sample_rate)
+  
+  magnituda = np.abs( np.fft.fft(signal,n))
+  frequency = np.fft.fftfreq(n, d=1/sample_rate)
   frequency = np.abs(frequency)
-  #fig = plt.figure(figsize=(15,7))
-  #plt.plot(frequency,magnituda)
-  #plt.xlim(0,sample_rate/2)
-  #plt.title('Frekvencijiski Spektar',fontsize=19,fontweight='bold')
-  #plt.xlabel("Frequency (Hz)",fontsize=14,fontweight='bold')
-  #plt.ylabel("Magnituda",fontsize=14,fontweight='bold')
-  #plt.grid()
-  #plt.show()
-  data = pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
-  return data
+  
+  return pd.DataFrame({'frekvencija':frequency,'magnituda':magnituda})
 
 def plot_histogram_amplitude(signal, N_bins, Amin, Amax, mu, sigma):
 
-  # Generate normal PDF/CDF
-  y_norm = np.linspace(Amin, Amax,1000)
-  pdf_norm = sp.stats.norm.pdf(y_norm, mu, sigma)
+  # Generate normal PDF i CDF
+    y_norm = np.linspace(Amin, Amax, 1000)
+    pdf = sp.stats.norm.pdf(y_norm, mu, sigma)
+    cdf = sp.stats.norm.cdf(y_norm, mu, sigma)
 
-  # Plot histogram & normal distribution
-  fig, ax = plt.subplots(figsize=(10, 5))
-  counts, edges, patches = ax.hist(signal, bins=N_bins, range=(Amin, Amax),density=True, alpha=0.6,rwidth=0.84,edgecolor='blue', color='royalblue')
-  ax.plot(y_norm, pdf_norm, 'r-', linewidth=2, label=f'Fitted Normal Dist. ($\mu={mu:.2f}$, $\sigma={sigma:.2f}$)')
+    fig = plt.figure(figsize=(12, 12))
 
-  # Linija za srednju vrijednost
-  ax.axvline(mu, color='red', linestyle='dashed', linewidth=2, label=f'Mean: {mu:.2f}')
+    # Plot histogram & PDF
+    ax1 = fig.add_subplot(2, 1, 1)
+    counts, edges, patches = ax1.hist(signal, bins=N_bins, range=(Amin, Amax), density=True, alpha=0.6, rwidth=0.84, edgecolor='blue', color='royalblue')
+    ax1.plot(y_norm, pdf, 'r-', linewidth=2, label=f'PDF. ($\mu={mu:.2f}$, $\sigma={sigma:.2f}$)')
 
-  # Linije za stand devijaciju
-  ax.axvline(mu - sigma, color='green', linestyle='dashed', linewidth=2, label=f'Std Dev: {sigma:.2f}')
-  ax.axvline(mu + sigma, color='green', linestyle='dashed', linewidth=2)
+    # Linija za sredinu
+    ax1.axvline(mu, color='red', linestyle='dashed', linewidth=2, label=f'teziste: {mu:.2f}')
 
-  # Label each bin
-  bin_labels = [f"[{edges[i]:.1f}, {edges[i+1]:.1f}>" for i in range(len(edges)-1)]
-  ax.set_xticks(edges[:-1] + np.diff(edges)/2)  # Oznaci sve na sredinu binova
-  ax.set_xticklabels(bin_labels, rotation=90)  # Rotiranje horizontalno da se vidi sve
+    # Linije za stand dev
+    ax1.axvline(mu - sigma, color='green', linestyle='dashed', linewidth=2, label=f'Std Dev: {sigma:.2f}')
+    ax1.axvline(mu + sigma, color='green', linestyle='dashed', linewidth=2)
 
-  plt.xlim(Amin, Amax)
-  plt.legend()
-  plt.grid(True)
-  #plt.show()
-  return st.write(fig)
+    # LOznaci svaki bin
+    bin_labels = [f"[{edges[i]:.1f}: {edges[i+1]:.1f}> $\mathbf{{{counts[i]:.2f}}}$" for i in range(len(edges)-1)]
+    ax1.set_xticks(edges[:-1] + np.diff(edges) / 2)  # Oznaciti binove na sredini
+    ax1.set_xticklabels(bin_labels, rotation=90)  # Rotiranje horizontalno da se vidi oznacenje
+
+    ax1.set_title('Histogram razina signala:procjena funkcije gustoće vjerojatnosti f(x)')
+    ax1.set_xlim(Amin, Amax)
+    ax1.legend()
+    ax1.grid(True)
+
+    # CDF
+    ax2 = fig.add_subplot(2, 1, 2)
+    ax2.plot(y_norm, cdf, linewidth=2, label='CDF')
+    ax2.set_title('Kumulativni histogram razina signala: procjena funkcije distribucije vjerojatnosti F(x) = P(X<=x)')
+    ax2.set_xlim(Amin-0.2, Amax+0.2)
+    ax2.legend()
+    ax2.grid(True)
+
+    plt.subplots_adjust(hspace=0.5)
+
+    st.pyplot(fig)
+
 
 def analiza_signala(signal):
   Umax = max(signal)
@@ -198,8 +207,8 @@ if __name__ == '__main__':
   st.header("ANALIZA SIGNALA")
 
   
-  gen_y1 = st.sidebar.button("Generate y1")
-  gen_y2 = st.sidebar.button("Generate y2")
+  gen_y1 = st.sidebar.button("Generate signal 1")
+  gen_y2 = st.sidebar.button("Generate signal 2")
   
   sample_rate = st.sidebar.slider("Odaberi SAMPLE RATE [Hz]", 1, 96000,22050) #Default SR 22050Hz, Max 96k Hz   
   st.sidebar.info("Frekvencija se resetira promjenom sampling-a (Nyquist frequiency)")  
@@ -274,13 +283,16 @@ if __name__ == '__main__':
   
   # prvi osnovni val
   with tab1:
-    
+    st.write("Prvi generirani val")
+
     st.bokeh_chart(gen_bokeh_plot(t, y1, Udc = float(analiza_y1[3]), Uef = float(analiza_y1[4]), on = dugme), use_container_width = False)
     st.subheader('Zvuk #1 generiranog signala')
     gen_audio(y1,44100)
 
     # drugi val po izboru
-    if len(y2) != 0: 
+    if len(y2) != 0:
+      st.write("Drugi generirani val") 
+
       st.bokeh_chart(gen_bokeh_plot(t, y2,  Udc = float(analiza_y2[3]), Uef = float(analiza_y2[4]), on = dugme),use_container_width=False) 
       brisanje = st.button('Izbrisi graf #2 (stisni tri puta)')
       if brisanje:
@@ -376,12 +388,30 @@ if __name__ == '__main__':
 
   if frequency_spectrum:
     st.write("FREKVENCIJSKI SPEKTAR")
+
     signal = st.session_state.y1
+
     if(len(y2)!=0):
       odabran_signal = st.radio("Odaberi da analiziras prvi ili drugi singal", ["signal 1","signal 2"])
       if odabran_signal == 'signal 2':
          signal = st.session_state.y2
-    st.line_chart((plot_frekvencijski_spekar(signal,sample_rate)), x='frekvencija', y = 'magnituda')
+
+
+    uzorci_FFT = []
+    n = int(np.log2(sample_rate))
+    while(n  > 7):
+      uzorci_FFT.append(2**n)
+      n -= 1
+
+    uzorci_FFT.reverse()
+      
+
+    option = st.selectbox(
+      "Odaberi broj uzoraka:",
+      uzorci_FFT
+      )
+
+    st.line_chart((plot_frekvencijski_spekar(signal,sample_rate,int(option))), x='frekvencija', y = 'magnituda')
 
   if histogram_amplitude:
     st.write("Histogram Amplitude")
