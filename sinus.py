@@ -333,7 +333,7 @@ if __name__ == '__main__':
                         )
       st.latex(r'''
                 \text{{Primjer oblika krivulja sa neparnim prirodnim brojem }} X, \text{{ parnim prirodnim brojem }} Y:\\
-                x = A \sin(Xt + \delta), \quad y = B \sin(Yt)
+                x = \sin(Xt + \delta), \quad y = \sin(Yt)
               ''')
       st.image(f"https://radioguy.files.wordpress.com/2016/11/lissajous-picture.png",width = 600)
       #primjeri = st.radio("Primjeri",["None","δ = π/2, a = 1, b = 2 (1:2)","δ = π/2, a = 3, b = 2 (3:2)",
