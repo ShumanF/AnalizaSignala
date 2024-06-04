@@ -394,7 +394,7 @@ if __name__ == '__main__':
       odabran_signal = st.radio("Odaberi da analiziras prvi ili drugi singal", ["signal #1","signal #2"])
       if odabran_signal == 'signal #2':
          signal = st.session_state.y2
-    st.scatter_chart(faza_vala_plot(y1),x='Signal',y='Faza',size=25)
+    st.scatter_chart(faza_vala_plot(y1),x='Amplituda',y='Faza',size=25)
 
   st.markdown("""---""")
 
