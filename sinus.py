@@ -33,7 +33,7 @@ def efective(y):
 @st.cache_data
 def faza_vala_plot(signal):
   amplituda = signal[:N_uzoraka:5]
-  faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
+  faza = np.diff(amplituda, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
   return pd.DataFrame({'Amplituda':amplituda,'Faza':faza})
 
 @st.cache_data
