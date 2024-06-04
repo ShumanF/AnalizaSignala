@@ -32,9 +32,9 @@ def efective(y):
 
 @st.cache_data
 def faza_vala_plot(signal):
-  signal = signal[:N_uzoraka:5]
+  amplituda = signal[:N_uzoraka:5]
   faza = np.diff(signal, prepend=signal[0]) #racunanje razlike hoda x[n+1]−x[n]
-  return pd.DataFrame({'Amplituda':signal,'Faza':faza})
+  return pd.DataFrame({'Amplituda':amplituda,'Faza':faza})
 
 @st.cache_data
 def plot_frekvencijski_spekar(signal,sample_rate,n):
