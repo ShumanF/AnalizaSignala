@@ -4,7 +4,6 @@ import scipy as sp
 import pandas as pd
 import streamlit as st
 import librosa
-import io
 from bokeh.plotting import figure
 from bokeh.models import Span
 
