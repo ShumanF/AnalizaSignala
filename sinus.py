@@ -376,7 +376,7 @@ if __name__ == '__main__':
      dataframe["y2"] = analiza_y2  
 
   st.dataframe(dataframe,
-               use_container_width=True,
+               use_container_width=False,
                hide_index=True,
                column_config={"Formule":st.column_config.ImageColumn("Formule")},
               
