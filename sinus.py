@@ -223,13 +223,16 @@ if __name__ == '__main__':
   pick_wave_gen = st.sidebar.radio(
     "Odaberi val koji generirati",
     [
-        "Sin","Cos","Sawtooth","Triangle","Square","White noise","Brown noise","Uploaded File"
+        "Sin","Cos","Sawtooth","Triangle","Square","White noise","Brown noise",
+        #"Uploaded File"
     ]
     )
   
   #uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
     
-  signal = switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
+  signal = switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,
+                       # uploaded_file=uploaded_file
+                       )
 
   #generiranje = st.sidebar.toggle("Lijevo y1 Desno y2")
   
