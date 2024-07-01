@@ -181,7 +181,9 @@ def gen_audio(signal,sample_rate):
   buffer.seek(0)
   st.audio(buffer,"audio/wav",sample_rate)
 
-def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate = 22050,uploaded_file = None):
+def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate = 22050
+                 #,uploaded_file = None
+                ):
   
    t = np.linspace(0, time, int(sample_rate * time), endpoint=False)
    faza = np.deg2rad(faza)
@@ -267,9 +269,13 @@ if __name__ == '__main__':
     st.session_state.y2 = []              #drugi val je prazan dok ga korisnik ne definira
 
   if gen_y1:
-    st.session_state.y1 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
+    st.session_state.y1 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
+                                                               #,uploaded_file=uploaded_file
+                                                              )
   if gen_y2:
-     st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,uploaded_file=uploaded_file)
+     st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
+                                                                #,uploaded_file=uploaded_file
+                                                               )
   
   analiza_y1 = analiza_signala(st.session_state.y1)
 
