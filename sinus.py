@@ -195,7 +195,7 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate 
             "Square": generate_square_wave(amplitude, t, frequency, faza),
             "White noise":  white_noise(amplitude,time,sample_rate),
             "Brown noise":  brown_noise(time,sample_rate),
-            "Uploaded File": None if uploaded_file is None else librosa.load(uploaded_file,sr=sample_rate)[0]
+            #"Uploaded File": None if uploaded_file is None else librosa.load(uploaded_file,sr=sample_rate)[0]
 
    }
    
@@ -232,8 +232,8 @@ if __name__ == '__main__':
   
   #uploaded_file = st.sidebar.file_uploader("Odaberi audio file [wav,mp3]", type=['wav', 'mp3'])
     
-  signal = switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate,
-                       # uploaded_file=uploaded_file
+  signal = switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
+                       # ,uploaded_file=uploaded_file
                        )
 
   #generiranje = st.sidebar.toggle("Lijevo y1 Desno y2")
