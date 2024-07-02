@@ -311,7 +311,7 @@ if __name__ == '__main__':
 
   with zbrajanje:
     if len(y2) != 0:
-      sum = y1 + y2
+      sum = st.session_state.y1 + st.session_state.y2
       st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
       #gen_audio(sum,44100)  
     else:
@@ -321,7 +321,7 @@ if __name__ == '__main__':
 
   with mnozenje:
     if len(y2) != 0:
-      mul = y1 * y2
+      mul = st.session_state.y1 * st.session_state.y2
       st.bokeh_chart(gen_bokeh_plot(t,mul,Udc=0,Uef=0),use_container_width=True)
       #gen_audio(sum,44100)
     else:
