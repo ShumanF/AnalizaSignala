@@ -286,7 +286,7 @@ if __name__ == '__main__':
 
   
 
-  t = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
+  vrijeme = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
 
   main, zbrajanje, mnozenje, lissajousove_krivulje = st.tabs(["Main", "Zbrajanje", "Mnozenje","Lissajousove krivulje "])
   
@@ -294,7 +294,7 @@ if __name__ == '__main__':
   with main:
     st.write("Prvi generirani val")
 
-    st.bokeh_chart(gen_bokeh_plot(t, y1, Udc = float(analiza_y1[3]), Uef = float(analiza_y1[4]), on = dugme), use_container_width = False)
+    st.bokeh_chart(gen_bokeh_plot(vrijeme, y1, Udc = float(analiza_y1[3]), Uef = float(analiza_y1[4]), on = dugme), use_container_width = False)
     st.subheader('Zvuk #1 generiranog signala')
     gen_audio(y1,44100)
 
@@ -302,7 +302,7 @@ if __name__ == '__main__':
     if len(y2) != 0:
       st.write("Drugi generirani val") 
 
-      st.bokeh_chart(gen_bokeh_plot(t, y2,  Udc = float(analiza_y2[3]), Uef = float(analiza_y2[4]), on = dugme),use_container_width=False) 
+      st.bokeh_chart(gen_bokeh_plot(vrijeme, y2,  Udc = float(analiza_y2[3]), Uef = float(analiza_y2[4]), on = dugme),use_container_width=False) 
       brisanje = st.button('Izbrisi graf #2 (stisni tri puta)')
       if brisanje:
         st.session_state.y2 = []
