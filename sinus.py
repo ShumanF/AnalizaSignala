@@ -357,7 +357,7 @@ if __name__ == '__main__':
         st.markdown("""---""") 
 
   st.markdown("""---""")
-  st.write("Analiza #1 signala [uzima se do prvih 1,2M uzoraka]")
+  st.write("Tablica Analiza Signala [uzima se do prvih 1,2M uzoraka]")
                
 
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=True))
