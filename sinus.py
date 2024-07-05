@@ -315,7 +315,7 @@ if __name__ == '__main__':
   vrijeme = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
 
   main, zbrajanje, mnozenje, lissajousove_krivulje = st.tabs(["Main", "Zbrajanje", "Mnozenje","Lissajousove krivulje "])
-  
+  st.write(listOfTime[0])
   # prvi osnovni val
   with main:
     st.write("Prvi generirani val")
