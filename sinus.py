@@ -315,7 +315,7 @@ if __name__ == '__main__':
   vrijeme = t[start:end]; y1 = st.session_state.y1[start:end]; y2 = st.session_state.y2[start:end]
 
   main, zbrajanje, mnozenje, lissajousove_krivulje = st.tabs(["Main", "Zbrajanje", "Mnozenje","Lissajousove krivulje "])
-  st.write(listOfTime[0])
+  
   # prvi osnovni val
   with main:
     st.write("Prvi generirani val")
@@ -338,7 +338,6 @@ if __name__ == '__main__':
     if len(y2) != 0:
         listOfTime.sort(key=len, reverse=True)
         sum = sum(st.session_state.y1, st.session_state.y2)
-        st.write(listOfTime[0])
         st.bokeh_chart(gen_bokeh_plot(listOfTime[0],sum,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)  
     else:
@@ -350,7 +349,6 @@ if __name__ == '__main__':
     if len(y2) != 0:
         listOfTime.sort(key=len, reverse=True)  
         mul = mul(st.session_state.y1, st.session_state.y2)
-        st.write(listOfTime[0])
         st.bokeh_chart(gen_bokeh_plot(listOfTime[0],mul,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)
     else:
