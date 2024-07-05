@@ -296,7 +296,7 @@ if __name__ == '__main__':
                                                               )
       listOfTime[0] = time
   
-    if gen_y2:
+  if gen_y2:
       st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
                                                                 #,uploaded_file=uploaded_file
                                                                )
@@ -486,4 +486,4 @@ if __name__ == '__main__':
 
     with col2:
       Amin, Amax = st.slider("Podesi slider za ulaze Amax i Amin",Umin,Umax,(Umin,Umax))
-    plot_histogram_amplitude(signal,N_bins, Amin, Amax, mu, sigma)
+      plot_histogram_amplitude(signal,N_bins, Amin, Amax, mu, sigma)
