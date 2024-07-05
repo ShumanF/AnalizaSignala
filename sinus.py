@@ -202,6 +202,26 @@ def switch_waves(option,amplitude = 1,time = 1,frequency = 1,faza=0,sample_rate 
    return options.get(option,"Default")
 
 
+def sum(signal1,signal2):
+  if len(signal1) < len(signal2):
+    suma = signal2.copy()
+    suma[:len(signal1)] += signal1
+  else:
+    suma = signal1.copy()
+    suma[:len(signal2)] += signal2
+
+  return np.array(suma)
+
+def mul(signal1,signal2):
+  if len(signal1) < len(signal2):
+    mul = signal2.copy()
+    mul[:len(signal1)] *= signal1
+  else:
+    mul = signal1.copy()
+    mul[:len(signal2)] *= signal2
+
+  return np.array(mul)
+
 
 if __name__ == '__main__':
 
@@ -262,20 +282,26 @@ if __name__ == '__main__':
   
   
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
-
+  listOfTime = []  
   if 'y1' not in st.session_state:
     st.session_state.y1 = np.sin(2*np.pi*t) #primjerni val kada se ucitava stranica
+    listOfTime.append(t)  
   if 'y2' not in st.session_state:
     st.session_state.y2 = []              #drugi val je prazan dok ga korisnik ne definira
-
+    listOfTime.append(t)
+      
   if gen_y1:
-    st.session_state.y1 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
+      st.session_state.y1 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
                                                                #,uploaded_file=uploaded_file
                                                               )
-  if gen_y2:
-     st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
+      listOfTime[0] = time
+  
+    if gen_y2:
+      st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
                                                                 #,uploaded_file=uploaded_file
                                                                )
+      listOfTime[1] = time
+      
   
   analiza_y1 = analiza_signala(st.session_state.y1)
 
@@ -293,7 +319,6 @@ if __name__ == '__main__':
   # prvi osnovni val
   with main:
     st.write("Prvi generirani val")
-
     st.bokeh_chart(gen_bokeh_plot(vrijeme, y1, Udc = float(analiza_y1[3]), Uef = float(analiza_y1[4]), on = dugme), use_container_width = False)
     st.subheader('Zvuk #1 generiranog signala')
     gen_audio(y1,44100)
@@ -311,19 +336,21 @@ if __name__ == '__main__':
 
   with zbrajanje:
     if len(y2) != 0:
-      sum = st.session_state.y1 + st.session_state.y2
-      st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
-      #gen_audio(sum,44100)  
+        listOfTime.sort(key=len, reverse=True)
+        sum = sum(st.session_state.y1, st.session_state.y2)
+        st.bokeh_chart(gen_bokeh_plot(listOfTime[0],sum,Udc=0,Uef=0),use_container_width=True)
+        #gen_audio(sum,44100)  
     else:
-      st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
-      st.markdown("""---""")
+        st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
+        st.markdown("""---""")
 
 
   with mnozenje:
     if len(y2) != 0:
-      mul = st.session_state.y1 * st.session_state.y2
-      st.bokeh_chart(gen_bokeh_plot(t,mul,Udc=0,Uef=0),use_container_width=True)
-      #gen_audio(sum,44100)
+        listOfTime.sort(key=len, reverse=True)  
+        mul = mul(st.session_state.y1, st.session_state.y2)
+        st.bokeh_chart(gen_bokeh_plot(listOfTime[0],mul,Udc=0,Uef=0),use_container_width=True)
+        #gen_audio(sum,44100)
     else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
         st.markdown("""---""") 
