@@ -243,7 +243,7 @@ if __name__ == '__main__':
   prigušenje = st.sidebar.slider("Prigusenje vala formulom $$e^{-\lambda t} \cdot signal$$ slider podesava λ :",0.0, 10.0, 0.0)
   
   pick_wave_gen = st.sidebar.radio(
-    "Odaberi val koji generirati",
+    "Odaberi signal koji generirati",
     [
         "Sin","Cos","Sawtooth","Triangle","Square","White noise","Brown noise",
         #"Uploaded File"
