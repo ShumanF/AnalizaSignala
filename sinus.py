@@ -482,7 +482,7 @@ if __name__ == '__main__':
     col1, col2 = st.columns(2)
     
     with col1:
-     N_bins = st.number_input("Odaberi broj razreda",3,99,11) # od 3 do 99, Default 11 bins
+     N_bins = st.number_input("Odaberi broj košara",3,99,11) # od 3 do 99, Default 11 bins
 
     with col2:
       Amin, Amax = st.slider("Podesi slider za ulaze Amax i Amin",Umin,Umax,(Umin,Umax))
