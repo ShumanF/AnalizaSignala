@@ -486,4 +486,4 @@ if __name__ == '__main__':
 
     with col2:
       Amin, Amax = st.slider("Podesi slider za ulaze Amax i Amin",Umin,Umax,(Umin,Umax))
-      plot_histogram_amplitude(signal,N_bins, Amin, Amax, mu, sigma)
+    plot_histogram_amplitude(signal,N_bins, Amin, Amax, mu, sigma)
