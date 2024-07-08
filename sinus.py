@@ -353,7 +353,7 @@ if __name__ == '__main__':
         listOfTime.sort(key=len, reverse=True)  
         mul = mul(st.session_state.y1, st.session_state.y2)
         mul_time = max(t1, t2)
-        st.bokeh_chart(gen_bokeh_plot(mul_time,mul,Udc=0,Uef=0),use_container_width=True)
+        st.bokeh_chart(gen_bokeh_plot(mul_time,st.session_state.y1 * st.session_state.y2,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)
     else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
