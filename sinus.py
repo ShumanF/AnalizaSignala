@@ -282,25 +282,27 @@ if __name__ == '__main__':
   
   
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
-  listOfTime = []  
+  listOfTime = []
+  t1 = 0
+  t2 = 0
   if 'y1' not in st.session_state:
     st.session_state.y1 = np.sin(2*np.pi*t) #primjerni val kada se ucitava stranica
-    listOfTime.append(t)  
+    t1 = t  
   if 'y2' not in st.session_state:
     st.session_state.y2 = []              #drugi val je prazan dok ga korisnik ne definira
-    listOfTime.append(t)
+    t2 = t
       
   if gen_y1:
       st.session_state.y1 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
                                                                #,uploaded_file=uploaded_file
                                                               )
-      listOfTime[0] = time
+      t1 = time
   
   if gen_y2:
       st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
                                                                 #,uploaded_file=uploaded_file
                                                                )
-      listOfTime[1] = time
+      t2 = time
       
   
   analiza_y1 = analiza_signala(st.session_state.y1)
@@ -338,7 +340,8 @@ if __name__ == '__main__':
     if len(y2) != 0:
         listOfTime.sort(key=len, reverse=True)
         sum = sum(st.session_state.y1, st.session_state.y2)
-        st.bokeh_chart(gen_bokeh_plot(listOfTime[0],sum,Udc=0,Uef=0),use_container_width=True)
+        sum_time = max(t1, t2) 
+        st.bokeh_chart(gen_bokeh_plot(sum_time,sum,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)  
     else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
@@ -349,7 +352,8 @@ if __name__ == '__main__':
     if len(y2) != 0:
         listOfTime.sort(key=len, reverse=True)  
         mul = mul(st.session_state.y1, st.session_state.y2)
-        st.bokeh_chart(gen_bokeh_plot(listOfTime[0],mul,Udc=0,Uef=0),use_container_width=True)
+        mul_time = max(t1, t2)
+        st.bokeh_chart(gen_bokeh_plot(mul_time,mul,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)
     else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
