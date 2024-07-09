@@ -282,27 +282,25 @@ if __name__ == '__main__':
   
   
   #st.write(gen_plot(signal[start:end],Umax,Umin,Udc,Uef,donji_lim=donji_lim,gornji_lim=gornji_lim,on=dugme))
-  listOfTime = []
-  t1 = 0
-  t2 = 0
+
   if 'y1' not in st.session_state:
     st.session_state.y1 = np.sin(2*np.pi*t) #primjerni val kada se ucitava stranica
-    t1 = t  
+      
   if 'y2' not in st.session_state:
     st.session_state.y2 = []              #drugi val je prazan dok ga korisnik ne definira
-    t2 = t
+    
       
   if gen_y1:
       st.session_state.y1 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
                                                                #,uploaded_file=uploaded_file
                                                               )
-      t1 = time
+      
   
   if gen_y2:
       st.session_state.y2 = np.exp(-t*prigušenje) * switch_waves(pick_wave_gen,amplitude,time,frequency,faza,sample_rate
                                                                 #,uploaded_file=uploaded_file
                                                                )
-      t2 = time
+      
       
   
   analiza_y1 = analiza_signala(st.session_state.y1)
@@ -338,10 +336,10 @@ if __name__ == '__main__':
 
   with zbrajanje:
     if len(y2) != 0:
-        listOfTime.sort(key=len, reverse=True)
+        
         sum = sum(st.session_state.y1, st.session_state.y2)
-        sum_time = max(t1, t2) 
-        st.bokeh_chart(gen_bokeh_plot(sum_time,sum,Udc=0,Uef=0),use_container_width=True)
+         
+        st.bokeh_chart(gen_bokeh_plot(t,sum,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)  
     else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
@@ -350,10 +348,10 @@ if __name__ == '__main__':
 
   with mnozenje:
     if len(y2) != 0:
-        listOfTime.sort(key=len, reverse=True)  
+          
         mul = mul(st.session_state.y1, st.session_state.y2)
-        mul_time = max(t1, t2)
-        st.bokeh_chart(gen_bokeh_plot(time,st.session_state.y1 * st.session_state.y2,Udc=0,Uef=0),use_container_width=True)
+        
+        st.bokeh_chart(gen_bokeh_plot(t,mul,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)
     else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
@@ -362,6 +360,9 @@ if __name__ == '__main__':
 
   with lissajousove_krivulje:
      if len(y2) != 0:
+      min_length = min(len(y1), len(y2))
+      y1 = y1[:min_length]
+      y2 = y2[:min_length]
       st.scatter_chart(pd.DataFrame({'y1':y1,'y2':y2})[::10],
                         x='y1',
                         y='y2',
