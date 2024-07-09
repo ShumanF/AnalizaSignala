@@ -348,14 +348,14 @@ if __name__ == '__main__':
 
   with mnozenje:
     if len(y2) != 0:
-          
+         
         mul = mul(st.session_state.y1, st.session_state.y2)
         
         st.bokeh_chart(gen_bokeh_plot(t,mul,Udc=0,Uef=0),use_container_width=True)
         #gen_audio(sum,44100)
     else:
         st.write("GENERIRAJ DRUGI SIGNAL ZA REZULTATE")
-        st.markdown("""---""") 
+        st.markdown("""---""")  
  
 
   with lissajousove_krivulje:
